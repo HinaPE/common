@@ -22,8 +22,8 @@ target_include_directories(HinaPE_Common PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 # add dependencies
 add_subdirectory(deps/tinyobjloader)
 target_link_libraries(HinaPE_Common PUBLIC tinyobjloader)
-add_subdirectory(deps/fpm)
-target_link_libraries(HinaPE_Common PUBLIC fpm)
+#add_subdirectory(deps/fpm)
+#target_link_libraries(HinaPE_Common PUBLIC fpm)
 
 set(TBB_DIR /opt/homebrew/Cellar/tbb@2020/2020_U3/lib/cmake/TBB)
 find_package(TBB CONFIG)
