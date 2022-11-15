@@ -15,7 +15,7 @@ file(GLOB
         "query_engine/*.cpp" "query_engine/*.h" "query_engine/*.inl.h"
         )
 
-add_library(HinaPE_Common STATIC ${HINAPE_COMMON_SRC} field/custom_vector_field3.h field/custom_vector_field3.cpp array/cubic_semi_lagrangian3.h array/semi_lagrangian3.h array/semi_lagrangian3.cpp array/cubic_semi_lagrangian3.cpp geometry/cylinder3.h geometry/cylinder3.cpp)
+add_library(HinaPE_Common STATIC ${HINAPE_COMMON_SRC} field/custom_vector_field3.h field/custom_vector_field3.cpp ../physics-engine/fluid-engine/solver/grid/cubic_semi_lagrangian3.h ../physics-engine/fluid-engine/solver/grid/semi_lagrangian3.h ../physics-engine/fluid-engine/solver/grid/semi_lagrangian3.cpp ../physics-engine/fluid-engine/solver/grid/cubic_semi_lagrangian3.cpp geometry/cylinder3.h geometry/cylinder3.cpp)
 set_target_properties(HinaPE_Common PROPERTIES CXX_STANDARD 20 CXX_EXTENSIONS OFF)
 target_include_directories(HinaPE_Common PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
