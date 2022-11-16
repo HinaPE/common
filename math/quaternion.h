@@ -6,6 +6,11 @@
 namespace HinaPE
 {
 
+#define EPS_F 0.00001f
+#define PI_F 3.14159265358979323846264338327950288f
+#define Radians(v) ((v) * (PI_F / 180.0f))
+#define Degrees(v) ((v) * (180.0f / PI_F))
+
 //!
 //! \brief Quaternion class defined as q = w + xi + yj + zk.
 //!
@@ -77,6 +82,7 @@ public:
     //! Sets the quaternion with 3x3 rotational matrix.
     void set(const Matrix3x3<T> &matrix);
 
+    static Quaternion<T> fromEulerAngles(const Vector3<T> &angles);
 
     // MARK: Basic getters
 

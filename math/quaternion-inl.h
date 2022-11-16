@@ -57,6 +57,26 @@ inline Quaternion<T>::Quaternion(const Quaternion &other)
     set(other);
 }
 
+template<typename T>
+Quaternion<T> Quaternion<T>::fromEulerAngles(const Vector3<T> &angles)
+{
+    auto x_axis = Vector3<T>{static_cast<T>(180.0f), static_cast<T>(0.0f), static_cast<T>(0.0f)};
+    auto z_axis = Vector3<T>{static_cast<T>(0.0f), static_cast<T>(0.0f), static_cast<T>(180.0f)};
+    if (angles == x_axis || angles == z_axis)
+        return {static_cast<T>(0.0f), static_cast<T>(0.0f), static_cast<T>(-1.0f), static_cast<T>(0.0f)};
+    T c1 = std::cos(Radians(angles[2] * static_cast<T>(0.5f)));
+    T c2 = std::cos(Radians(angles[1] * static_cast<T>(0.5f)));
+    T c3 = std::cos(Radians(angles[0] * static_cast<T>(0.5f)));
+    T s1 = std::sin(Radians(angles[2] * static_cast<T>(0.5f)));
+    T s2 = std::sin(Radians(angles[1] * static_cast<T>(0.5f)));
+    T s3 = std::sin(Radians(angles[0] * static_cast<T>(0.5f)));
+    T x = c1 * c2 * s3 - s1 * s2 * c3;
+    T y = c1 * s2 * c3 + s1 * c2 * s3;
+    T z = s1 * c2 * c3 - c1 * s2 * s3;
+    T w = c1 * c2 * c3 + s1 * s2 * s3;
+    return {x, y, z, w};
+}
+
 // Basic setters
 template<typename T>
 inline void Quaternion<T>::set(const Quaternion &other)
@@ -97,7 +117,7 @@ inline void Quaternion<T>::set(const Vector3<T> &axis, T angle)
         setIdentity();
     } else
     {
-        Vector3<T> normalizedAxis = axis.normalized();
+        Vector3 < T > normalizedAxis = axis.normalized();
         T s = std::sin(angle / 2);
 
         x = normalizedAxis.x * s;
@@ -112,7 +132,7 @@ inline void Quaternion<T>::set(const Vector3<T> &from, const Vector3<T> &to)
 {
     static const T eps = std::numeric_limits<T>::epsilon();
 
-    Vector3<T> axis = from.cross(to);
+    Vector3 < T > axis = from.cross(to);
 
     T fromLengthSquared = from.lengthSquared();
     T toLengthSquared = to.lengthSquared();
@@ -194,7 +214,7 @@ template<typename T>
 template<typename U>
 Quaternion<U> Quaternion<T>::castTo() const
 {
-    return Quaternion<U>(static_cast<U>(w), static_cast<U>(x), static_cast<U>(y), static_cast<U>(z));
+    return Quaternion < U > (static_cast<U>(w), static_cast<U>(x), static_cast<U>(y), static_cast<U>(z));
 }
 
 //! Returns normalized quaternion.
@@ -220,7 +240,7 @@ inline Vector3<T> Quaternion<T>::mul(const Vector3<T> &v) const
     T _2yw = 2 * y * w;
     T _2zw = 2 * z * w;
 
-    return Vector3<T>((1 - _2yy - _2zz) * v.x + (_2xy - _2zw) * v.y + (_2xz + _2yw) * v.z, (_2xy + _2zw) * v.x + (1 - _2zz - _2xx) * v.y + (_2yz - _2xw) * v.z, (_2xz - _2yw) * v.x + (_2yz + _2xw) * v.y + (1 - _2yy - _2xx) * v.z);
+    return Vector3 < T > ((1 - _2yy - _2zz) * v.x + (_2xy - _2zw) * v.y + (_2xz + _2yw) * v.z, (_2xy + _2zw) * v.x + (1 - _2zz - _2xx) * v.y + (_2yz - _2xw) * v.z, (_2xz - _2yw) * v.x + (_2yz + _2xw) * v.y + (1 - _2yy - _2xx) * v.z);
 }
 
 template<typename T>
@@ -259,7 +279,7 @@ inline void Quaternion<T>::setIdentity()
 template<typename T>
 inline void Quaternion<T>::rotate(T angleInRadians)
 {
-    Vector3<T> axis;
+    Vector3 < T > axis;
     T currentAngle;
 
     getAxisAngle(&axis, &currentAngle);
@@ -287,7 +307,7 @@ inline void Quaternion<T>::normalize()
 template<typename T>
 inline Vector3<T> Quaternion<T>::axis() const
 {
-    Vector3<T> result(x, y, z);
+    Vector3 < T > result(x, y, z);
     result.normalize();
 
     if (2 * std::acos(w) < pi<T>())
@@ -456,7 +476,7 @@ inline Quaternion<T> slerp(const Quaternion<T> &a, const Quaternion<T> &b, T t)
         }
     }
 
-    return Quaternion<T>(weightA * a.w + weightB * b.w, weightA * a.x + weightB * b.x, weightA * a.y + weightB * b.y, weightA * a.z + weightB * b.z);
+    return Quaternion < T > (weightA * a.w + weightB * b.w, weightA * a.x + weightB * b.x, weightA * a.y + weightB * b.y, weightA * a.z + weightB * b.z);
 }
 
 // Operator overloadings
