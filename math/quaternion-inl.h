@@ -44,16 +44,16 @@ template<typename T>
 void Quaternion<T>::set(T roll, T pitch, T yaw)
 {
     // ref: https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Euler_angles_to_quaternion_conversion
-    auto degree_roll = to_degrees(roll);
-    auto degree_pitch = to_degrees(pitch);
-    auto degree_yaw = to_degrees(yaw);
+    auto radians_roll = to_radians(roll);
+    auto radians_pitch = to_radians(pitch);
+    auto radians_yaw = to_radians(yaw);
 
-    double cr = std::cos(degree_roll * static_cast<T>(0.5));
-    double sr = std::sin(degree_roll * static_cast<T>(0.5));
-    double cp = std::cos(degree_pitch * static_cast<T>(0.5));
-    double sp = std::sin(degree_pitch * static_cast<T>(0.5));
-    double cy = std::cos(degree_yaw * static_cast<T>(0.5));
-    double sy = std::sin(degree_yaw * static_cast<T>(0.5));
+    double cr = std::cos(radians_roll * static_cast<T>(0.5));
+    double sr = std::sin(radians_roll * static_cast<T>(0.5));
+    double cp = std::cos(radians_pitch * static_cast<T>(0.5));
+    double sp = std::sin(radians_pitch * static_cast<T>(0.5));
+    double cy = std::cos(radians_yaw * static_cast<T>(0.5));
+    double sy = std::sin(radians_yaw * static_cast<T>(0.5));
 
     w = cr * cp * cy + sr * sp * sy;
     x = sr * cp * cy - cr * sp * sy;
