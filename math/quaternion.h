@@ -6,10 +6,19 @@
 namespace HinaPE
 {
 
-#define EPS_F 0.00001f
 #define PI_F 3.14159265358979323846264338327950288f
-#define Radians(v) ((v) * (PI_F / 180.0f))
-#define Degrees(v) ((v) * (180.0f / PI_F))
+
+template<typename T>
+auto to_radians(T v) -> T
+{
+    return v * (PI_F / 180.0f);
+}
+
+template<typename T>
+auto to_degrees(T v) -> T
+{
+    return v * (180.0f / PI_F);
+}
 
 //!
 //! \brief Quaternion class defined as q = w + xi + yj + zk.
@@ -40,6 +49,9 @@ public:
     //! Constructs a quaternion with given elements.
     Quaternion(T newW, T newX, T newY, T newZ);
 
+    //! Constructs a quaternion with given euler angles.
+    Quaternion(T roll, T pitch, T yaw);
+
     //! Constructs a quaternion with given elements.
     Quaternion(const std::initializer_list<T> &lst);
 
@@ -50,10 +62,10 @@ public:
     Quaternion(const Vector3<T> &from, const Vector3<T> &to);
 
     //! Constructs a quaternion with three basis vectors.
-    Quaternion(const Vector3<T> &axis0, const Vector3<T> &axis1, const Vector3<T> &axis2);
+    Quaternion(const Vector3<T> &rotationBasis0, const Vector3<T> &rotationBasis1, const Vector3<T> &rotationBasis2);
 
     //! Constructs a quaternion with 3x3 rotational matrix.
-    explicit Quaternion(const Matrix3x3<T> &m33);
+    explicit Quaternion(const Matrix3x3<T> &matrix);
 
     //! Copy constructor.
     Quaternion(const Quaternion &other);
@@ -66,6 +78,9 @@ public:
 
     //! Sets the quaternion with given elements.
     void set(T newW, T newX, T newY, T newZ);
+
+    //! Sets the quaternion with given euler angles.
+    void set(T roll, T pitch, T yaw);
 
     //! Sets the quaternion with given elements.
     void set(const std::initializer_list<T> &lst);
@@ -82,34 +97,32 @@ public:
     //! Sets the quaternion with 3x3 rotational matrix.
     void set(const Matrix3x3<T> &matrix);
 
-    static Quaternion<T> fromEulerAngles(const Vector3<T> &angles);
-
     // MARK: Basic getters
 
     //! Returns quaternion with other base type.
     template<typename U>
-    Quaternion<U> castTo() const;
+    auto castTo() const -> Quaternion<U>;
 
     //! Returns normalized quaternion.
-    Quaternion normalized() const;
+    auto normalized() const -> Quaternion;
 
 
     // MARK: Binary operator methods - new instance = this instance (+) input
 
     //! Returns this quaternion * vector.
-    Vector3<T> mul(const Vector3<T> &v) const;
+    auto mul(const Vector3<T> &v) const -> Vector3<T>;
 
     //! Returns this quaternion * other quaternion.
-    Quaternion mul(const Quaternion &other) const;
+    auto mul(const Quaternion &other) const -> Quaternion;
 
     //! Computes the dot product with other quaternion.
-    T dot(const Quaternion<T> &other);
+    auto dot(const Quaternion<T> &other) -> T;
 
 
     // MARK: Binary operator methods - new instance = input (+) this instance
 
     //! Returns other quaternion * this quaternion.
-    Quaternion rmul(const Quaternion &other) const;
+    auto rmul(const Quaternion &other) const -> Quaternion;
 
     // MARK: Augmented operator methods - this instance (+)= input
 
@@ -132,74 +145,76 @@ public:
     // MARK: Complex getters
 
     //! Returns the rotational axis.
-    Vector3<T> axis() const;
+    auto axis() const -> Vector3<T>;
 
     //! Returns the rotational angle.
-    T angle() const;
+    auto angle() const -> T;
 
     //! Returns the axis and angle.
     void getAxisAngle(Vector3<T> *axis, T *angle) const;
 
     //! Returns the inverse quaternion.
-    Quaternion inverse() const;
+    auto inverse() const -> Quaternion;
 
     //! Converts to the 3x3 rotation matrix.
-    Matrix3x3<T> matrix3() const;
+    auto matrix3() const -> Matrix3x3<T>;
 
     //! Converts to the 4x4 rotation matrix.
-    Matrix4x4<T> matrix4() const;
+    auto matrix4() const -> Matrix4x4<T>;
 
     //! Returns L2 norm of this quaternion.
-    T l2Norm() const;
+    auto l2Norm() const -> T;
+
+    auto euler() const -> Vector3<T>;
 
 
     // MARK: Setter operators
 
     //! Assigns other quaternion.
-    Quaternion &operator=(const Quaternion &other);
+    auto operator=(const Quaternion &other) -> Quaternion &;
 
     //! Returns this quaternion *= other quaternion.
-    Quaternion &operator*=(const Quaternion &other);
+    auto operator*=(const Quaternion &other) -> Quaternion &;
 
 
     // MARK: Getter operators
 
     //! Returns the reference to the i-th element.
-    T &operator[](size_t i);
+    auto operator[](size_t i) -> T &;
 
     //! Returns the const reference to the i-th element.
-    const T &operator[](size_t i) const;
+    auto operator[](size_t i) const -> const T &;
 
     //! Returns true if equal.
-    bool operator==(const Quaternion &other) const;
+    auto operator==(const Quaternion &other) const -> bool;
 
     //! Returns true if not equal.
-    bool operator!=(const Quaternion &other) const;
+    auto operator!=(const Quaternion &other) const -> bool;
 
 
     // MARK: Builders
 
     //! Returns identity matrix.
-    static Quaternion makeIdentity();
+    static auto makeIdentity() -> Quaternion;
 };
 
 //! Computes spherical linear interpolation.
 template<typename T>
-Quaternion<T> slerp(const Quaternion<T> &a, const Quaternion<T> &b, T t);
+auto slerp(const Quaternion<T> &a, const Quaternion<T> &b, T t) -> Quaternion<T>;
 
 //! Returns quaternion q * vector v.
 template<typename T>
-Vector<T, 3> operator*(const Quaternion<T> &q, const Vector<T, 3> &v);
+auto operator*(const Quaternion<T> &q, const Vector<T, 3> &v) -> Vector<T, 3>;
 
 //! Returns quaternion a times quaternion b.
 template<typename T>
-Quaternion<T> operator*(const Quaternion<T> &a, const Quaternion<T> &b);
+auto operator*(const Quaternion<T> &a, const Quaternion<T> &b) -> Quaternion<T>;
 
 //! Float-type quaternion.
-typedef Quaternion<float> QuaternionF;
+using QuaternionF = Quaternion<float>;
 
 //! Double-type quaternion.
-typedef Quaternion<double> QuaternionD;
+using QuaternionD = Quaternion<double>;
 
 }  // namespace HinaPE
 
