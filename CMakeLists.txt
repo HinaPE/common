@@ -16,7 +16,7 @@ file(GLOB
         )
 
 add_library(HinaPE_Common STATIC ${HINAPE_COMMON_SRC} field/custom_vector_field3.h field/custom_vector_field3.cpp geometry/cylinder3.h geometry/cylinder3.cpp)
-set_target_properties(HinaPE_Common PROPERTIES CXX_STANDARD 20 CXX_EXTENSIONS OFF)
+set_target_properties(HinaPE_Common PROPERTIES CXX_STANDARD 20 CXX_EXTENSIONS ON)
 target_include_directories(HinaPE_Common PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # add dependencies
