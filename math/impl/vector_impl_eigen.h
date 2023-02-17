@@ -39,7 +39,7 @@ template<typename T> auto Vector3<T>::min() const -> T 							{ return std::min(
 template<typename T> auto Vector3<T>::max() const -> T 							{ return std::max(x(), std::max(y(), z())); }
 template<typename T> auto Vector3<T>::dot(const Vector3 &v_) const -> T 		{ return this->_v.dot(v_._v); }
 template<typename T> auto Vector3<T>::cross(const Vector3 &v_) const -> Vector3 { return Vector3(this->_v.cross(v_._v)); }
-template<typename T> auto Vector3<T>::length() -> T 							{ return _v.norm(); }
+template<typename T> auto Vector3<T>::length() const -> T 							{ return _v.norm(); }
 template<typename T> auto Vector3<T>::length_squared() -> T 					{ return _v.squaredNorm(); }
 template<typename T> void Vector3<T>::normalize() 								{ _v.normalize(); }
 template<typename T> auto Vector3<T>::normalized() const -> Vector3 			{ return Vector3(_v.normalized()); }
@@ -178,7 +178,7 @@ template<typename T> auto Vector2<T>::min() const -> T 							{ return std::min(
 template<typename T> auto Vector2<T>::max() const -> T 							{ return std::max(x(), std::max(y())); }
 template<typename T> auto Vector2<T>::dot(const Vector2 &v_) const -> T 		{ return this->_v.dot(v_._v); }
 template<typename T> auto Vector2<T>::cross(const Vector2 &v_) const -> Vector2 { return Vector2(this->_v.cross(v_._v)); }
-template<typename T> auto Vector2<T>::length() -> T 							{ return _v.norm(); }
+template<typename T> auto Vector2<T>::length() const -> T 							{ return _v.norm(); }
 template<typename T> auto Vector2<T>::length_squared() -> T 					{ return _v.squaredNorm(); }
 template<typename T> void Vector2<T>::normalize() 								{ _v.normalize(); }
 template<typename T> auto Vector2<T>::normalized() const -> Vector2 			{ return Vector2(_v.normalized()); }
@@ -314,7 +314,7 @@ template<typename T> auto Vector4<T>::min() const -> T 							{ return std::min(
 template<typename T> auto Vector4<T>::max() const -> T 							{ return std::max(x(), std::max(y(), std::max(z(), w()))); }
 template<typename T> auto Vector4<T>::dot(const Vector4 &v_) const -> T 		{ return this->_v.dot(v_._v); }
 template<typename T> auto Vector4<T>::cross(const Vector4 &v_) const -> Vector4 { return Vector4(this->_v.cross(v_._v)); }
-template<typename T> auto Vector4<T>::length() -> T 							{ return _v.norm(); }
+template<typename T> auto Vector4<T>::length() const -> T 							{ return _v.norm(); }
 template<typename T> auto Vector4<T>::length_squared() -> T 					{ return _v.squaredNorm(); }
 template<typename T> void Vector4<T>::normalize() 								{ _v.normalize(); }
 template<typename T> auto Vector4<T>::normalized() const -> Vector4 			{ return Vector4(_v.normalized()); }

@@ -29,7 +29,7 @@ public:
 	auto max() const -> T;
 	auto dot(const Vector3 &v) const -> T;
 	auto cross(const Vector3 &v) const -> Vector3;
-	auto length() -> T;
+	auto length() const -> T;
 	auto length_squared() -> T;
 	void normalize();
 	auto normalized() const -> Vector3;
@@ -118,7 +118,7 @@ public:
 	auto max() const -> T;
 	auto dot(const Vector2 &v) const -> T;
 	auto cross(const Vector2 &v) const -> Vector2;
-	auto length() -> T;
+	auto length() const -> T;
 	auto length_squared() -> T;
 	void normalize();
 	auto normalized() const -> Vector2;
@@ -204,7 +204,7 @@ public:
 	auto max() const -> T;
 	auto dot(const Vector4 &v) const -> T;
 	auto cross(const Vector4 &v) const -> Vector4;
-	auto length() -> T;
+	auto length() const -> T;
 	auto length_squared() -> T;
 	void normalize();
 	auto normalized() const -> Vector4;
