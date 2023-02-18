@@ -3,8 +3,10 @@
 
 #ifdef HINAPE_DOUBLE
 using real = double;
+#define ImGuiDataType_Real ImGuiDataType_Double
 #else
 using real = float;
+#define ImGuiDataType_Real ImGuiDataType_Float
 #endif
 
 #include <memory>
