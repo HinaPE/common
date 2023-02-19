@@ -30,26 +30,32 @@ using real = float;
 //@formatter:off
 namespace HinaPE::Constant
 {
-static constexpr real Zero       = static_cast<real>(0);
-static constexpr real One        = static_cast<real>(1);
-static constexpr real Half       = static_cast<real>(0.5);
-static constexpr real Infinity   = std::numeric_limits<real>::max();
-static constexpr real Epsilon    = std::numeric_limits<real>::epsilon();
-static constexpr real PI         = static_cast<real>(3.1415926535897932384);
-static constexpr real TwoPI      = static_cast<real>(6.2831853071795864769);
-static constexpr real HalfPI     = static_cast<real>(1.5707963267948966192);
-static constexpr real InvPI      = static_cast<real>(0.3183098861837906715);
-static constexpr real InvTwoPI   = static_cast<real>(0.1591549430918953358);
-static constexpr real InvHalfPI  = static_cast<real>(0.6366197723675813431);
-static constexpr real E          = static_cast<real>(2.7182818284590452354);
-static constexpr real Log2E      = static_cast<real>(1.4426950408889634074);
-static constexpr real Log10E     = static_cast<real>(0.4342944819032518276);
-static constexpr real Ln2        = static_cast<real>(0.6931471805599453094);
-static constexpr real Ln10       = static_cast<real>(2.3025850929940456840);
-static constexpr real Sqrt2      = static_cast<real>(1.4142135623730950488);
-static constexpr real Sqrt3      = static_cast<real>(1.7320508075688772935);
-static constexpr real SqrtHalf   = static_cast<real>(0.7071067811865475244);
-static constexpr size_t ZeroSize = 0;
+static constexpr real Zero         = static_cast<real>(0);
+static constexpr real One          = static_cast<real>(1);
+static constexpr real Half         = static_cast<real>(0.5);
+static constexpr real Infinity     = std::numeric_limits<real>::max();
+static constexpr real Epsilon      = std::numeric_limits<real>::epsilon();
+static constexpr real PI           = static_cast<real>(3.1415926535897932384);
+static constexpr real TwoPI        = static_cast<real>(6.2831853071795864769);
+static constexpr real HalfPI       = static_cast<real>(1.5707963267948966192);
+static constexpr real InvPI        = static_cast<real>(0.3183098861837906715);
+static constexpr real InvTwoPI     = static_cast<real>(0.1591549430918953358);
+static constexpr real InvHalfPI    = static_cast<real>(0.6366197723675813431);
+static constexpr real E            = static_cast<real>(2.7182818284590452354);
+static constexpr real Log2E        = static_cast<real>(1.4426950408889634074);
+static constexpr real Log10E       = static_cast<real>(0.4342944819032518276);
+static constexpr real Ln2          = static_cast<real>(0.6931471805599453094);
+static constexpr real Ln10         = static_cast<real>(2.3025850929940456840);
+static constexpr real Sqrt2        = static_cast<real>(1.4142135623730950488);
+static constexpr real Sqrt3        = static_cast<real>(1.7320508075688772935);
+static constexpr real SqrtHalf     = static_cast<real>(0.7071067811865475244);
+static constexpr size_t ZeroSize   = 0;
+static constexpr real I_REAL_MIN   = -std::numeric_limits<real>::max();
+static constexpr real I_REAL_MAX   = std::numeric_limits<real>::max();
+static constexpr int I_INT_MIN     = -std::numeric_limits<int>::max();
+static constexpr int I_INT_MAX     = std::numeric_limits<int>::max();
+static constexpr size_t I_SIZE_MIN = -std::numeric_limits<size_t>::max();
+static constexpr size_t I_SIZE_MAX = std::numeric_limits<size_t>::max();
 }
 
 namespace HinaPE::Direction

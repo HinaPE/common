@@ -67,16 +67,7 @@ void HinaPE::Animation::PhysicsAnimation::update_physics(float time_step)
 
 		for (int i = 0; i < _opt.sub_time_step; ++i)
 		{
-#ifdef HINAPE_DEBUG
-			Util::Timer timer;
-#endif
-
 			on_physics_update(actual_time);
-
-#ifdef HINAPE_DEBUG
-			timer.duration("On Update Physics");
-#endif
-
 			_opt._current_time += actual_time;
 		}
 	} else
@@ -86,15 +77,7 @@ void HinaPE::Animation::PhysicsAnimation::update_physics(float time_step)
 		{
 			float actual_time = remaining_time / static_cast<float>(_opt.sub_time_step);
 
-#ifdef HINAPE_DEBUG
-			Util::Timer timer;
-#endif
-
 			on_physics_update(actual_time);
-
-#ifdef HINAPE_DEBUG
-			timer.duration("On Update Physics");
-#endif
 
 			remaining_time -= actual_time;
 			_opt._current_time += actual_time;

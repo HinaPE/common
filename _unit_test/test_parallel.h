@@ -3,7 +3,6 @@
 #include "gtest/gtest.h"
 
 #include "util/parallel.h"
-#include "util/timer.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -24,23 +23,17 @@ TEST(TestParallel, Parallel)
 	auto f1 = std::async(std::launch::async,
 						 [&]() -> float
 						 {
-							 Timer timer;
-
 							 for (int i = 0; i < scale; ++i)
 							 {
 								 auto v2 = v1;
 								 std::sort(v2.begin(), v2.end());
 							 }
-
-							 timer.duration("For");
-							 return timer._last_duration;
+							 return 1;
 						 });
 
 	auto f2 = std::async(std::launch::async,
 						 [&]() -> float
 						 {
-							 Timer timer;
-
 							 parallelFor(0, scale,
 													 [&](int i)
 													 {
@@ -49,8 +42,7 @@ TEST(TestParallel, Parallel)
 													 },
 													 ExecutionPolicy::Parallel);
 
-							 timer.duration("parallelFor");
-							 return timer._last_duration;
+							 return 1;
 						 });
 
 	std::cout << "acceleration rate: " << f1.get() / f2.get() << std::endl;
