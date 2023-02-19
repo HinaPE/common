@@ -22,6 +22,7 @@ using real = float;
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <random>
 
 //@formatter:off
 namespace HinaPE::Constant
