@@ -1,6 +1,9 @@
 #ifndef HINAPE_MATH_EXT_H
 #define HINAPE_MATH_EXT_H
 
+// Copyright (c) 2023 Xayah Hina
+// MPL-2.0 license
+
 #ifdef HINAPE_DOUBLE
 using real = double;
 #define ImGuiDataType_Real ImGuiDataType_Double
@@ -372,5 +375,7 @@ auto distanceToZeroLevelSet(T phi0, T phi1) -> T
 	else
 		return static_cast<T>(0.5);
 }
+
+
 }
 #endif //HINAPE_MATH_EXT_H

@@ -1,6 +1,9 @@
 #ifndef HINAPE_PHYSICS_ANIMATION_H
 #define HINAPE_PHYSICS_ANIMATION_H
 
+// Copyright (c) 2023 Xayah Hina
+// MPL-2.0 license
+
 #include "animation.h"
 
 namespace HinaPE::Animation

@@ -1,6 +1,9 @@
 #ifndef HINAPE_ARRAY_H
 #define HINAPE_ARRAY_H
 
+// Copyright (c) 2023 Xayah Hina
+// MPL-2.0 license
+
 #include "math/size.h"
 #include "math/vector.h"
 #include "math/math_ext.h"

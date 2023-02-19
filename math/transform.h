@@ -1,6 +1,9 @@
 #ifndef HINAPE_TRANSFORM3_H
 #define HINAPE_TRANSFORM3_H
 
+// Copyright (c) 2023 Xayah Hina
+// MPL-2.0 license
+
 #include "math/vector.h"
 #include "math/quaternion.h"
 #include "math/matrix.h"

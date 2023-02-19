@@ -1,6 +1,9 @@
 #ifndef HINAPE_SURFACE3_H
 #define HINAPE_SURFACE3_H
 
+// Copyright (c) 2023 Xayah Hina
+// MPL-2.0 license
+
 #include "math/vector.h"
 #include "math/ray.h"
 #include "math/transform.h"

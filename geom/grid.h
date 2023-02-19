@@ -1,6 +1,9 @@
 #ifndef HINAPE_GRID_H
 #define HINAPE_GRID_H
 
+// Copyright (c) 2023 Xayah Hina
+// MPL-2.0 license
+
 #include "field.h"
 #include "math/array.h"
 #include "math/size.h"

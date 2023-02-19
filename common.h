@@ -1,6 +1,9 @@
 #ifndef HINAPE_COMMON_H
 #define HINAPE_COMMON_H
 
+// Copyright (c) 2023 Xayah Hina
+// MPL-2.0 license
+
 #include "math/array.h"
 #include "math/matrix.h"
 #include "math/quaternion.h"

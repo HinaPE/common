@@ -1,6 +1,9 @@
 #ifndef HINAPE_COLLIDER_H
 #define HINAPE_COLLIDER_H
 
+// Copyright (c) 2023 Xayah Hina
+// MPL-2.0 license
+
 #include "surface3.h"
 
 namespace HinaPE::Geom

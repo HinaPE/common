@@ -1,6 +1,9 @@
 #ifndef HINAPE_BBOX_H
 #define HINAPE_BBOX_H
 
+// Copyright (c) 2023 Xayah Hina
+// MPL-2.0 license
+
 #include "math/vector.h"
 
 namespace HinaPE::Geom

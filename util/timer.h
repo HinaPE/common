@@ -1,6 +1,9 @@
 #ifndef HINAPE_TIMER_H
 #define HINAPE_TIMER_H
 
+// Copyright (c) 2023 Xayah Hina
+// MPL-2.0 license
+
 #include <iostream>
 #include <chrono>
 #include <memory>

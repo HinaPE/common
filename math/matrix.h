@@ -1,6 +1,9 @@
 #ifndef HINAPE_MATRIX_H
 #define HINAPE_MATRIX_H
 
+// Copyright (c) 2023 Xayah Hina
+// MPL-2.0 license
+
 #include "math/math_ext.h"
 
 #ifdef HINA_EIGEN

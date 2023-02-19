@@ -1,6 +1,9 @@
 #ifndef HINAPE_QUATERNION_H
 #define HINAPE_QUATERNION_H
 
+// Copyright (c) 2023 Xayah Hina
+// MPL-2.0 license
+
 #ifdef HINA_EIGEN
 #include "Eigen/Eigen"
 #endif
