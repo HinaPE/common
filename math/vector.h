@@ -314,7 +314,7 @@ namespace HinaPE::Math
 template<typename T>
 inline auto uniform_sample_cone(T u1, T u2, const mVector3 &axis, T angle) -> mVector3
 {
-	T cos_angle_2 = std::cos(angle / 2);
+	T cos_angle_2 = std::cos(degrees_to_radians(angle) / 2);
 	T y = 1 - (1 - cos_angle_2) * u1;
 	T r = std::sqrt(std::max<T>(0, 1 - y * y));
 	T phi = Constant::TwoPI * u2;
