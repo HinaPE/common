@@ -41,6 +41,9 @@ public:
 public:
 	static inline constexpr auto Zero() -> Vector3 { return Vector3(0, 0, 0); }
 	static inline constexpr auto One() -> Vector3 { return Vector3(1, 1, 1); }
+	static inline constexpr auto UnitX() -> Vector3 { return Vector3(1, 0, 0); }
+	static inline constexpr auto UnitY() -> Vector3 { return Vector3(0, 1, 0); }
+	static inline constexpr auto UnitZ() -> Vector3 { return Vector3(0, 0, 1); }
 
 public:
 	template<typename U>
