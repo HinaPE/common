@@ -34,6 +34,8 @@ Quaternion<T>::Quaternion(T roll, T pitch, T yaw)
 	_q.normalize();
 }
 template<typename T>
+Quaternion<T>::Quaternion(const Vector3<T> &euler) : Quaternion(euler.x(), euler.y(), euler.z()) {}
+template<typename T>
 Quaternion<T>::Quaternion(const std::initializer_list<T> &lst)
 {
 	assert(lst.size() == 4);

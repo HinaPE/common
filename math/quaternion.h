@@ -44,6 +44,7 @@ public:
 	Quaternion();
 	Quaternion(T w_, T x_, T y_, T z_);
 	Quaternion(T roll, T pitch, T yaw);
+	Quaternion(const Vector3<T> &euler);
 	Quaternion(const Vector3<T> &axis, T angle);
 	Quaternion(const Vector3<T> &from, const Vector3<T> &to);
 	explicit Quaternion(Eigen::Quaternion<T, Eigen::DontAlign> q_);
