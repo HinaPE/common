@@ -8,7 +8,11 @@
 namespace HinaPE::Util
 {
 template<typename IndexType, typename Function>
-void parallelFor(IndexType begin_index, IndexType end_index, const Function &function, ExecutionPolicy policy) {}
+void parallelFor(IndexType begin_index, IndexType end_index, const Function &function, ExecutionPolicy policy)
+{
+	for (IndexType i = begin_index; i < end_index; ++i)
+		
+}
 
 template<typename IndexType, typename Function>
 void parallelRangeFor(IndexType begin_index, IndexType end_index, const Function &function, ExecutionPolicy policy) {}
