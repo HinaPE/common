@@ -22,6 +22,9 @@ struct SurfaceRayIntersection3
 class Surface3
 {
 public:
+	void flip_normal() { _opt.normal_flipped = true; }
+
+public:
 	virtual void update_query_engine() {}
 	virtual auto is_bounded() -> bool { return true; }
 	virtual auto is_valid_geometry() -> bool { return true; }
@@ -57,7 +60,14 @@ protected:
 class Box3 final : public Surface3
 {
 public:
-
+	struct Opt
+	{
+		real width = 1;
+		real height = 1;
+		real depth = 1;
+	} _opt;
+	explicit Box3(mTransform3 transform = mTransform3()) : Surface3(std::move(transform)) {}
+	void _rebuild_();
 
 protected:
 	auto _intersects_local(const mRay3 &ray) const -> bool final;

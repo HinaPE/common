@@ -25,6 +25,10 @@ auto HinaPE::Geom::Box3::_closest_normal_local(const mVector3 &other_point) cons
 {
 	return {};
 }
+void HinaPE::Geom::Box3::_rebuild_()
+{
+	_bound = mBBox3(mVector3(-_opt.width / 2, -_opt.height / 2, -_opt.depth / 2), mVector3(_opt.width / 2, _opt.height / 2, _opt.depth / 2));
+}
 
 // ============================== Sphere ==============================
 auto HinaPE::Geom::Sphere3::_intersects_local(const mRay3 &ray) const -> bool
