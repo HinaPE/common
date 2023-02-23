@@ -4,6 +4,8 @@
 // Copyright (c) 2023 Xayah Hina
 // MPL-2.0 license
 
+#include <utility>
+
 #include "math/vector.h"
 #include "math/ray.h"
 #include "math/transform.h"
@@ -60,14 +62,8 @@ protected:
 class Box3 final : public Surface3
 {
 public:
-	struct Opt
-	{
-		real width = 1;
-		real height = 1;
-		real depth = 1;
-	} _opt;
-	explicit Box3(mTransform3 transform = mTransform3()) : Surface3(std::move(transform)) {}
-	void _rebuild_();
+	explicit Box3(real width, real height, real depth, mTransform3 transform = mTransform3()) : Surface3(std::move(transform)) { _bound = mBBox3(mVector3(-width / 2, -height / 2, -depth / 2), mVector3(width / 2, height / 2, depth / 2)); }
+	mBBox3 _bound;
 
 protected:
 	auto _intersects_local(const mRay3 &ray) const -> bool final;
@@ -76,9 +72,6 @@ protected:
 	auto _closest_intersection_local(const mRay3 &ray) const -> SurfaceRayIntersection3 final;
 	auto _closest_distance_local(const mVector3 &other_point) const -> real final;
 	auto _closest_normal_local(const mVector3 &other_point) const -> mVector3 final;
-
-protected:
-	mBBox3 _bound;
 };
 
 class Sphere3 final : public Surface3
@@ -94,6 +87,11 @@ protected:
 
 class Plane3 final : public Surface3
 {
+public:
+	explicit Plane3(mVector3 point, mVector3 normal, mTransform3 transform = mTransform3()) : Surface3(std::move(transform)), _point(std::move(point)), _normal(std::move(normal)) {}
+	mVector3 _normal;
+	mVector3 _point;
+
 protected:
 	auto _intersects_local(const mRay3 &ray) const -> bool override;
 	auto _bounding_box_local() const -> mBBox3 override;

@@ -7,10 +7,13 @@ auto HinaPE::Geom::Box3::_intersects_local(const mRay3 &ray) const -> bool
 }
 auto HinaPE::Geom::Box3::_bounding_box_local() const -> mBBox3
 {
-	return {};
+	return _bound;
 }
 auto HinaPE::Geom::Box3::_closest_point_local(const mVector3 &other_point) const -> mVector3
 {
+	if (_bound.contains(other_point))
+	{
+	}
 	return {};
 }
 auto HinaPE::Geom::Box3::_closest_intersection_local(const mRay3 &ray) const -> HinaPE::Geom::SurfaceRayIntersection3
@@ -24,10 +27,6 @@ auto HinaPE::Geom::Box3::_closest_distance_local(const mVector3 &other_point) co
 auto HinaPE::Geom::Box3::_closest_normal_local(const mVector3 &other_point) const -> mVector3
 {
 	return {};
-}
-void HinaPE::Geom::Box3::_rebuild_()
-{
-	_bound = mBBox3(mVector3(-_opt.width / 2, -_opt.height / 2, -_opt.depth / 2), mVector3(_opt.width / 2, _opt.height / 2, _opt.depth / 2));
 }
 
 // ============================== Sphere ==============================
@@ -59,15 +58,27 @@ auto HinaPE::Geom::Sphere3::_closest_normal_local(const mVector3 &other_point) c
 // ============================== Plane ==============================
 auto HinaPE::Geom::Plane3::_intersects_local(const mRay3 &ray) const -> bool
 {
-	return false;
+	return std::fabs(ray._direction.dot(_normal)) > 0.0f;
 }
 auto HinaPE::Geom::Plane3::_bounding_box_local() const -> mBBox3
 {
-	return {};
+	if (std::fabs(_normal.dot(mVector3(1, 0, 0)) - Constant::One) < Constant::Epsilon)
+		return {_point - mVector3(-Constant::Zero, -Constant::Infinity, -Constant::Infinity),
+				_point + mVector3(Constant::Zero, Constant::Infinity, Constant::Infinity)};
+	else if (std::fabs(_normal.dot(mVector3(0, 1, 0)) - Constant::One) < Constant::Epsilon)
+		return {_point - mVector3(-Constant::Infinity, -Constant::Zero, -Constant::Infinity),
+				_point + mVector3(Constant::Infinity, Constant::Zero, Constant::Infinity)};
+	else if (std::fabs(_normal.dot(mVector3(0, 0, 1)) - Constant::One) < Constant::Epsilon)
+		return {_point - mVector3(-Constant::Infinity, -Constant::Infinity, -Constant::Zero),
+				_point + mVector3(Constant::Infinity, Constant::Infinity, Constant::Zero)};
+	else
+		return {mVector3(Constant::Infinity, Constant::Infinity, Constant::Infinity),
+				mVector3(Constant::Infinity, Constant::Infinity, Constant::Infinity)};
 }
 auto HinaPE::Geom::Plane3::_closest_point_local(const mVector3 &other_point) const -> mVector3
 {
-	return {};
+	mVector3 r = other_point - _point;
+	return _point + _normal * r.dot(_normal);
 }
 auto HinaPE::Geom::Plane3::_closest_intersection_local(const mRay3 &ray) const -> HinaPE::Geom::SurfaceRayIntersection3
 {

@@ -9,6 +9,14 @@
 namespace HinaPE::Geom
 {
 template<typename T>
+struct BoundingBoxRayIntersection3
+{
+	bool is_intersecting = false;
+	T t_near = std::numeric_limits<T>::max();
+	T t_far = std::numeric_limits<T>::max();
+};
+
+template<typename T>
 class BoundingBox3
 {
 public:
@@ -17,6 +25,7 @@ public:
 	auto depth() const -> T;
 	auto length(size_t axis) -> T;
 	auto overlaps(const BoundingBox3 &other) const -> bool;
+	auto contains(const mVector3 &point) const -> bool;
 	auto corner(size_t idx) const -> mVector3;
 	auto center() const -> mVector3;
 	void merge(const mVector3 &point);
@@ -66,6 +75,14 @@ auto BoundingBox3<T>::overlaps(const BoundingBox3 &other) const -> bool
 	if (_upper_corner.x() < other._lower_corner.x() || _lower_corner.x() > other._upper_corner.x()) return false;
 	if (_upper_corner.y() < other._lower_corner.y() || _lower_corner.y() > other._upper_corner.y()) return false;
 	if (_upper_corner.z() < other._lower_corner.z() || _lower_corner.z() > other._upper_corner.z()) return false;
+	return true;
+}
+template<typename T>
+auto BoundingBox3<T>::contains(const mVector3 &point) const -> bool
+{
+	if (_lower_corner.x() > point.x() || _upper_corner.x() < point.x()) return false;
+	if (_lower_corner.y() > point.y() || _upper_corner.y() < point.y()) return false;
+	if (_lower_corner.z() > point.z() || _upper_corner.z() < point.z()) return false;
 	return true;
 }
 template<typename T>
