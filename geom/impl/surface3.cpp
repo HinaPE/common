@@ -3,6 +3,9 @@
 // ============================== Box ==============================
 auto HinaPE::Geom::Box3::_intersects_local(const mRay3 &ray) const -> bool
 {
+	real t_min = 0;
+	real t_max = std::numeric_limits<real>::max();
+	const mVector3 ray_inv_dir = ray._direction.reciprocal();
 	return false;
 }
 auto HinaPE::Geom::Box3::_bounding_box_local() const -> mBBox3
