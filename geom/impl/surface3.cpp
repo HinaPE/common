@@ -81,7 +81,7 @@ auto HinaPE::Geom::Plane3::_bounding_box_local() const -> mBBox3
 auto HinaPE::Geom::Plane3::_closest_point_local(const mVector3 &other_point) const -> mVector3
 {
 	mVector3 r = other_point - _point;
-	return _point + _normal * r.dot(_normal);
+	return other_point - r.dot(_normal) * _normal;
 }
 auto HinaPE::Geom::Plane3::_closest_intersection_local(const mRay3 &ray) const -> HinaPE::Geom::SurfaceRayIntersection3
 {
@@ -93,7 +93,7 @@ auto HinaPE::Geom::Plane3::_closest_distance_local(const mVector3 &other_point) 
 }
 auto HinaPE::Geom::Plane3::_closest_normal_local(const mVector3 &other_point) const -> mVector3
 {
-	return {};
+	return _normal;
 }
 
 
