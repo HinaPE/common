@@ -10,8 +10,11 @@ namespace HinaPE::Util
 template<typename IndexType, typename Function>
 void parallelFor(IndexType begin_index, IndexType end_index, const Function &function, ExecutionPolicy policy)
 {
+	if (begin_index > end_index)
+		return;
+
 	for (IndexType i = begin_index; i < end_index; ++i)
-		
+		function(i);
 }
 
 template<typename IndexType, typename Function>
