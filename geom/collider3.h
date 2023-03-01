@@ -1,5 +1,5 @@
-#ifndef HINAPE_COLLIDER_H
-#define HINAPE_COLLIDER_H
+#ifndef HINAPE_COLLIDER3_H
+#define HINAPE_COLLIDER3_H
 
 // Copyright (c) 2023 Xayah Hina
 // MPL-2.0 license
@@ -8,10 +8,10 @@
 
 namespace HinaPE::Geom
 {
-class Collider
+class Collider3
 {
 public:
-	using OnBeginUpdateCallback = std::function<void(Collider *, real, real)>;
+	using OnBeginUpdateCallback = std::function<void(Collider3 *, real, real)>;
 	void update(real current_time, real time_interval);
 	void resolve_collision(real radius, real restitution, mVector3 &position, mVector3 &velocity) const;
 
@@ -38,9 +38,15 @@ protected:
 private:
 	Surface3Ptr _surface;
 };
+using Collider3Ptr = std::shared_ptr<Collider3>;
 
 
-using ColliderPtr = std::shared_ptr<Collider>;
+class RigidBodyCollider3 final : public Collider3
+{
+public:
+	auto velocity_at(const mVector3 &point) const -> mVector3 final;
+};
+using RigidBodyCollider3Ptr = std::shared_ptr<RigidBodyCollider3>;
 }
 
-#endif //HINAPE_COLLIDER_H
+#endif //HINAPE_COLLIDER3_H

@@ -1,6 +1,6 @@
-#include "geom/collider.h"
+#include "geom/collider3.h"
 
-void HinaPE::Geom::Collider::update(real current_time, real time_interval)
+void HinaPE::Geom::Collider3::update(real current_time, real time_interval)
 {
 	if (!_surface->is_valid_geometry())
 		return;
@@ -10,7 +10,7 @@ void HinaPE::Geom::Collider::update(real current_time, real time_interval)
 	if (_opt._on_begin_update_callback)
 		_opt._on_begin_update_callback(this, current_time, time_interval);
 }
-void HinaPE::Geom::Collider::resolve_collision(real radius, real restitution, mVector3 &position, mVector3 &velocity) const
+void HinaPE::Geom::Collider3::resolve_collision(real radius, real restitution, mVector3 &position, mVector3 &velocity) const
 {
 	auto result = get_closest_point(_surface, position);
 	if (is_penetrating(result, position, radius))
@@ -52,7 +52,7 @@ void HinaPE::Geom::Collider::resolve_collision(real radius, real restitution, mV
 		position = target_point;
 	}
 }
-auto HinaPE::Geom::Collider::get_closest_point(const Surface3Ptr &surface, const mVector3 &query_point) const -> HinaPE::Geom::Collider::ColliderQueryResult
+auto HinaPE::Geom::Collider3::get_closest_point(const Surface3Ptr &surface, const mVector3 &query_point) const -> HinaPE::Geom::Collider3::ColliderQueryResult
 {
 	ColliderQueryResult result;
 	result.distance = surface->closest_distance(query_point);
@@ -61,7 +61,14 @@ auto HinaPE::Geom::Collider::get_closest_point(const Surface3Ptr &surface, const
 	result.velocity = velocity_at(result.point);
 	return result;
 }
-auto HinaPE::Geom::Collider::is_penetrating(const HinaPE::Geom::Collider::ColliderQueryResult &result, const mVector3 &position, real radius) const -> bool
+auto HinaPE::Geom::Collider3::is_penetrating(const HinaPE::Geom::Collider3::ColliderQueryResult &result, const mVector3 &position, real radius) const -> bool
 {
 	return _surface->is_inside(position) || (result.distance < radius);
+}
+
+
+
+mVector3 HinaPE::Geom::RigidBodyCollider3::velocity_at(const mVector3 &point) const
+{
+	return {};
 }
