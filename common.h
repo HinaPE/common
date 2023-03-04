@@ -27,5 +27,9 @@ public:
 	auto operator=(CopyDisable &&) -> CopyDisable & = default;
 };
 }
+// @formatter:off
+template<typename T> auto is(const auto *src) -> bool { return dynamic_cast<const T *>(src) != nullptr; }
+template<typename T> auto as(auto *src) -> T * { return dynamic_cast<T *>(src); }
+// @formatter:on
 
 #endif //HINAPE_COMMON_H
