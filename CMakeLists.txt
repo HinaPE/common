@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.18)
-project(HinaPE_Common VERSION 2.0.0 DESCRIPTION "HinaPE is not a Physics Engine" LANGUAGES CXX)
+project(HinaPE_Common VERSION 2.0.0 DESCRIPTION "HinaPE is not a Physics Engine" LANGUAGES C CXX)
 
 option(HINAPE_DOUBLE "use double float precision" ON)
 option(HINAPE_UNIT_TEST "build unit test" ON)
@@ -15,12 +15,13 @@ file(GLOB_RECURSE
         "geom/*.cpp" "geom/*.h"
         "math/*.cpp" "math/*.h"
         "util/*.cpp" "util/*.h"
+        "igl/*.cpp" "igl/*.h" "igl/*.c"
         )
 
 add_library(HinaPE_Common STATIC ${src})
 set_target_properties(HinaPE_Common PROPERTIES CXX_STANDARD 20 CXX_EXTENSIONS ON)
 target_include_directories(HinaPE_Common PUBLIC .)
-target_compile_definitions(HinaPE_Common PUBLIC HINAPE_DEBUG)
+target_compile_definitions(HinaPE_Common PUBLIC HINAPE_DEBUG IGL_STATIC_LIBRARY)
 if (HINAPE_DOUBLE)
     target_compile_definitions(HinaPE_Common PUBLIC HINAPE_DOUBLE)
 endif ()

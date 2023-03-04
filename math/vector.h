@@ -38,6 +38,8 @@ public:
 	auto normalized() const -> Vector3;
 	auto tangential() const -> std::tuple<Vector3, Vector3>;
 	auto reciprocal() const -> Vector3;
+//	auto data() const -> const T *;
+	auto data() -> T *;
 
 public:
 	static inline constexpr auto Zero() -> Vector3 { return Vector3(0, 0, 0); }

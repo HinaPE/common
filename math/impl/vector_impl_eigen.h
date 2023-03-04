@@ -38,6 +38,8 @@ template<typename T> void Vector3<T>::normalize() 								{ _v.normalize(); }
 template<typename T> auto Vector3<T>::normalized() const -> Vector3 			{ return Vector3(_v.normalized()); }
 template<typename T> auto Vector3<T>::tangential() const -> std::tuple<Vector3, Vector3> { Vector3<T> a = ((std::fabs(y()) > 0 || std::fabs(z()) > 0) ? Vector3<T>(1, 0, 0): Vector3<T>(0, 1, 0)).cross(*this).normalized(); Vector3<T> b = cross(a); return std::make_tuple(a, b); }
 template<typename T> auto Vector3<T>::reciprocal() const -> Vector3 			{ return Vector3(1 / x(), 1 / y(), 1 / z()); }
+//template<typename T> auto Vector3<T>::data() const -> const T * 				{ return _v.data(); }
+template<typename T> auto Vector3<T>::data() -> T * 							{ return _v.data(); }
 
 template<typename T>
 template<typename U> auto Vector3<T>::operator=(const std::initializer_list<U> &lst) -> Vector3 & 		{ assert(lst.size() >= 3); auto input_elem = lst.begin(); _v.x() = static_cast<T>(*input_elem); _v.y() = static_cast<T>(*(++input_elem)); _v.z() = static_cast<T>(*(++input_elem)); return (*this); }
