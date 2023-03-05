@@ -4,6 +4,8 @@
 // Copyright (c) 2023 Xayah Hina
 // MPL-2.0 license
 
+#include <utility>
+
 #include "surface3.h"
 
 namespace HinaPE::Geom
@@ -46,6 +48,11 @@ class RigidBodyCollider3 final : public Collider3
 public:
 	auto velocity_at(const mVector3 &point) const -> mVector3 final;
 
+public:
+	explicit RigidBodyCollider3(Surface3Ptr surface) : _surface(std::move(surface)) {}
+
+private:
+	Surface3Ptr _surface;
 };
 using RigidBodyCollider3Ptr = std::shared_ptr<RigidBodyCollider3>;
 }
