@@ -16,7 +16,7 @@ namespace HinaPE::Geom
 struct SurfaceRayIntersection3
 {
 	bool is_intersecting = false;
-	double distance = std::numeric_limits<real>::max();
+	real distance = std::numeric_limits<real>::max();
 	mVector3 point;
 	mVector3 normal;
 };

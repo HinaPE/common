@@ -212,6 +212,7 @@ public:
 	auto length_squared() -> T;
 	void normalize();
 	auto normalized() const -> Vector4;
+	auto xyz() const -> Vector3<T>;
 
 public:
 	static inline constexpr auto Zero() -> Vector4 { return Vector4(0, 0, 0, 0); }

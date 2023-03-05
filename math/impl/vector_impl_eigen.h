@@ -128,6 +128,7 @@ template<typename T> auto Vector4<T>::length() const -> T 						{ return _v.norm
 template<typename T> auto Vector4<T>::length_squared() -> T 					{ return _v.squaredNorm(); }
 template<typename T> void Vector4<T>::normalize() 								{ _v.normalize(); }
 template<typename T> auto Vector4<T>::normalized() const -> Vector4 			{ return Vector4(_v.normalized()); }
+template<typename T> auto Vector4<T>::xyz() const -> Vector3<T> 				{ return Vector3<T>(x(), y(), z()); }
 
 template<typename T>
 template<typename U> auto Vector4<T>::operator=(const std::initializer_list<U> &lst) -> Vector4 & 	{ assert(lst.size() >= 4); auto input_elem = lst.begin(); _v.x() = static_cast<T>(*input_elem); _v.y() = static_cast<T>(*(++input_elem)); _v.z() = static_cast<T>(*(++input_elem)); _v.w() = static_cast<T>(*(++input_elem)); return (*this); }
