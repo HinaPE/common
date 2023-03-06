@@ -7,8 +7,8 @@ void HinaPE::Geom::Collider3::update(real current_time, real time_interval)
 
 	_surface->update_query_engine();
 
-	if (_opt._on_begin_update_callback)
-		_opt._on_begin_update_callback(this, current_time, time_interval);
+	if (_on_begin_update_callback)
+		_on_begin_update_callback(this, current_time, time_interval);
 }
 void HinaPE::Geom::Collider3::resolve_collision(real radius, real restitution, mVector3 &position, mVector3 &velocity) const
 {
@@ -67,8 +67,8 @@ auto HinaPE::Geom::Collider3::is_penetrating(const HinaPE::Geom::Collider3::Coll
 }
 
 
-
-mVector3 HinaPE::Geom::RigidBodyCollider3::velocity_at(const mVector3 &point) const
+auto HinaPE::Geom::RigidBodyCollider3::velocity_at(const mVector3 &point) const -> mVector3
 {
-	return {};
+	mVector3 r = point - _surface->_transform._translation;
+	return _linear_velocity + _angular_velocity.cross(r);
 }

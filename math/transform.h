@@ -53,7 +53,7 @@ public:
 	explicit Transform3() = default;
 	explicit Transform3(Vector3<T> t, Quaternion<T> q);
 
-private:
+public:
 	Vector3<T> _translation;
 	Quaternion<T> _orientation;
 	Matrix3x3<T> _orientation_mat3;

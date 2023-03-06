@@ -55,7 +55,7 @@ protected:
 	virtual auto _closest_normal_local(const mVector3 &other_point) const -> mVector3 = 0;
 	inline virtual auto _is_inside_local(const mVector3 &other_point) const -> bool { return (other_point - _closest_point_local(other_point)).dot(_closest_normal_local(other_point)) < 0; }
 
-protected:
+public:
 	mTransform3 _transform;
 };
 

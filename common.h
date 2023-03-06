@@ -6,10 +6,11 @@
 
 #include "math/array.h"
 #include "math/matrix.h"
+#include "math/vector.h"
 #include "math/quaternion.h"
 #include "math/ray.h"
 #include "math/transform.h"
-#include "math/vector.h"
+#include "math/time_integration.h"
 #include "geom/bbox.h"
 #include "geom/surface3.h"
 #include "util/parallel.h"

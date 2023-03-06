@@ -381,7 +381,5 @@ auto distanceToZeroLevelSet(T phi0, T phi1) -> T
 	else
 		return static_cast<T>(0.5);
 }
-
-
-}
+} // namespace HinaPE::Math
 #endif //HINAPE_MATH_EXT_H

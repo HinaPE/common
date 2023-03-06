@@ -13,17 +13,16 @@ namespace HinaPE::Geom
 class Collider3
 {
 public:
-	using OnBeginUpdateCallback = std::function<void(Collider3 *, real, real)>;
-	void update(real current_time, real time_interval);
 	void resolve_collision(real radius, real restitution, mVector3 &position, mVector3 &velocity) const;
 
+public:
+	void update(real current_time, real time_interval);
 	virtual auto velocity_at(const mVector3 &point) const -> mVector3 = 0;
 
 public:
 	struct Opt
 	{
 		real friction = Constant::Zero;
-		OnBeginUpdateCallback _on_begin_update_callback;
 	} _opt;
 	struct ColliderQueryResult final
 	{
@@ -32,13 +31,16 @@ public:
 		mVector3 normal;
 		mVector3 velocity;
 	};
+	explicit Collider3(Surface3Ptr surface) : _surface(std::move(surface)) {}
 
 protected:
 	auto get_closest_point(const Surface3Ptr &surface, const mVector3 &query_point) const -> ColliderQueryResult;
 	auto is_penetrating(const ColliderQueryResult &result, const mVector3 &position, real radius) const -> bool;
 
-private:
+protected:
 	Surface3Ptr _surface;
+	using OnBeginUpdateCallback = std::function<void(Collider3 *, real, real)>;
+	OnBeginUpdateCallback _on_begin_update_callback;
 };
 using Collider3Ptr = std::shared_ptr<Collider3>;
 
@@ -49,10 +51,12 @@ public:
 	auto velocity_at(const mVector3 &point) const -> mVector3 final;
 
 public:
-	explicit RigidBodyCollider3(Surface3Ptr surface) : _surface(std::move(surface)) {}
+	explicit RigidBodyCollider3(Surface3Ptr surface) : Collider3(std::move(surface)) {}
+	explicit RigidBodyCollider3(Surface3Ptr surface, mVector3 linear_velocity, mVector3 angular_velocity) : Collider3(std::move(surface)), _linear_velocity(std::move(linear_velocity)), _angular_velocity(std::move(angular_velocity)) {}
 
 private:
-	Surface3Ptr _surface;
+	mVector3 _linear_velocity;
+	mVector3 _angular_velocity;
 };
 using RigidBodyCollider3Ptr = std::shared_ptr<RigidBodyCollider3>;
 }
