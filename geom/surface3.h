@@ -63,6 +63,7 @@ class Box3 : public Surface3
 {
 public:
 	mBBox3 _bound;
+	mVector3 _extent;
 
 protected:
 	auto _intersects_local(const mRay3 &ray) const -> bool final;
@@ -75,9 +76,10 @@ protected:
 
 class Sphere3 : public Surface3
 {
-protected:
+public:
 	real _radius = 1;
 
+protected:
 	auto _intersects_local(const mRay3 &ray) const -> bool override;
 	auto _bounding_box_local() const -> mBBox3 override;
 	auto _closest_point_local(const mVector3 &other_point) const -> mVector3 override;
