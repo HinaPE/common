@@ -59,10 +59,9 @@ public:
 	mTransform3 _transform;
 };
 
-class Box3 final : public Surface3
+class Box3 : public Surface3
 {
 public:
-	explicit Box3(real width, real height, real depth, mTransform3 transform = mTransform3()) : Surface3(std::move(transform)) { _bound = mBBox3(mVector3(-width / 2, -height / 2, -depth / 2), mVector3(width / 2, height / 2, depth / 2)); }
 	mBBox3 _bound;
 
 protected:
@@ -74,9 +73,11 @@ protected:
 	auto _closest_normal_local(const mVector3 &other_point) const -> mVector3 final;
 };
 
-class Sphere3 final : public Surface3
+class Sphere3 : public Surface3
 {
 protected:
+	real _radius = 1;
+
 	auto _intersects_local(const mRay3 &ray) const -> bool override;
 	auto _bounding_box_local() const -> mBBox3 override;
 	auto _closest_point_local(const mVector3 &other_point) const -> mVector3 override;
@@ -85,10 +86,9 @@ protected:
 	auto _closest_normal_local(const mVector3 &other_point) const -> mVector3 override;
 };
 
-class Plane3 final : public Surface3
+class Plane3 : public Surface3
 {
 public:
-	explicit Plane3(mVector3 point, mVector3 normal, mTransform3 transform = mTransform3()) : Surface3(std::move(transform)), _point(std::move(point)), _normal(std::move(normal)) {}
 	mVector3 _normal;
 	mVector3 _point;
 
@@ -101,7 +101,7 @@ protected:
 	auto _closest_normal_local(const mVector3 &other_point) const -> mVector3 override;
 };
 
-class Cylinder3 final : public Surface3
+class Cylinder3 : public Surface3
 {
 protected:
 	auto _intersects_local(const mRay3 &ray) const -> bool override;
@@ -124,7 +124,7 @@ protected:
 	virtual auto _signed_distance_local(const mVector3 &other_point) const -> real = 0;
 };
 
-class SurfaceToImplicit3 final : public ImplicitSurface3
+class SurfaceToImplicit3 : public ImplicitSurface3
 {
 public:
 	explicit SurfaceToImplicit3(const std::shared_ptr<Surface3> &surface);

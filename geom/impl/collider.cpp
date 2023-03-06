@@ -52,7 +52,7 @@ void HinaPE::Geom::Collider3::resolve_collision(real radius, real restitution, m
 		position = target_point;
 	}
 }
-auto HinaPE::Geom::Collider3::get_closest_point(const Surface3Ptr &surface, const mVector3 &query_point) const -> HinaPE::Geom::Collider3::ColliderQueryResult
+auto HinaPE::Geom::Collider3::get_closest_point(Surface3 *surface, const mVector3 &query_point) const -> HinaPE::Geom::Collider3::ColliderQueryResult
 {
 	ColliderQueryResult result;
 	result.distance = surface->closest_distance(query_point);
