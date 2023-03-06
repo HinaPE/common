@@ -45,7 +45,7 @@ protected:
 using Collider3Ptr = std::shared_ptr<Collider3>;
 
 
-class RigidBodyCollider3 final : public Collider3
+class RigidBodyCollider3 : public Collider3
 {
 public:
 	auto velocity_at(const mVector3 &point) const -> mVector3 final;
