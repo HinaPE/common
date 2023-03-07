@@ -4,8 +4,6 @@
 // Copyright (c) 2023 Xayah Hina
 // MPL-2.0 license
 
-#include <utility>
-
 #include "math/vector.h"
 #include "math/ray.h"
 #include "math/transform.h"
@@ -22,6 +20,7 @@ struct SurfaceRayIntersection3
 	unsigned int ID = std::numeric_limits<unsigned int>::max();
 };
 
+// @formatter:off
 class Surface3
 {
 public:
@@ -29,14 +28,14 @@ public:
 
 public:
 	virtual void update_query_engine() {}
-	virtual auto is_bounded() -> bool { return true; }
-	virtual auto is_valid_geometry() -> bool { return true; }
-	inline auto intersects(const mRay3 &ray) const -> bool { return _intersects_local(_transform.to_local(ray)); }
-	inline auto bounding_box() const -> mBBox3 { return _transform.to_world(_bounding_box_local()); }
-	inline auto closest_point(const mVector3 &other_point) const -> mVector3 { return _transform.to_world(_closest_point_local(_transform.to_local(other_point))); }
-	inline auto closest_distance(const mVector3 &other_point) const -> real { return _closest_distance_local(_transform.to_local(other_point)); }
-	inline auto closest_normal(const mVector3 &other_point) const -> mVector3 { return ((_opt.normal_flipped) ? -Constant::One : Constant::One) * _transform.to_world_direction(_closest_normal_local(_transform.to_local(other_point))); }
-	inline auto is_inside(const mVector3 &point) -> bool { return _opt.normal_flipped == _is_inside_local(_transform.to_local(point)); }
+	virtual auto is_bounded() -> bool 											{ return true; }
+	virtual auto is_valid_geometry() -> bool 									{ return true; }
+	inline auto intersects(const mRay3 &ray) const -> bool 						{ return _intersects_local(_transform.to_local(ray)); }
+	inline auto bounding_box() const -> mBBox3 									{ return _transform.to_world(_bounding_box_local()); }
+	inline auto closest_point(const mVector3 &other_point) const -> mVector3 	{ return _transform.to_world(_closest_point_local(_transform.to_local(other_point))); }
+	inline auto closest_distance(const mVector3 &other_point) const -> real 	{ return _closest_distance_local(_transform.to_local(other_point)); }
+	inline auto closest_normal(const mVector3 &other_point) const -> mVector3 	{ return ((_opt.normal_flipped) ? -Constant::One : Constant::One) * _transform.to_world_direction(_closest_normal_local(_transform.to_local(other_point))); }
+	inline auto is_inside(const mVector3 &point) -> bool 						{ return _opt.normal_flipped == !_is_inside_local(_transform.to_local(point)); }
 
 public:
 	struct Opt
@@ -48,17 +47,18 @@ public:
 	explicit Surface3(mTransform3 transform = mTransform3()) : _transform(std::move(transform)) {}
 
 protected:
-	virtual auto _intersects_local(const mRay3 &ray) const -> bool = 0;
-	virtual auto _bounding_box_local() const -> mBBox3 = 0;
 	virtual auto _closest_point_local(const mVector3 &other_point) const -> mVector3 = 0;
 	virtual auto _closest_intersection_local(const mRay3 &ray) const -> SurfaceRayIntersection3 = 0;
 	virtual auto _closest_distance_local(const mVector3 &other_point) const -> real;
 	virtual auto _closest_normal_local(const mVector3 &other_point) const -> mVector3 = 0;
 	virtual auto _is_inside_local(const mVector3 &other_point) const -> bool;
+	virtual auto _intersects_local(const mRay3 &ray) const -> bool = 0;
+	virtual auto _bounding_box_local() const -> mBBox3 = 0;
 
 public:
 	mTransform3 _transform;
 };
+// @formatter:on
 
 class Box3 : public Surface3
 {
@@ -67,11 +67,11 @@ public:
 	mVector3 _extent;
 
 protected:
+	auto _closest_point_local(const mVector3 &other_point) const -> mVector3 final;
+	auto _closest_normal_local(const mVector3 &other_point) const -> mVector3 final;
+	auto _closest_intersection_local(const mRay3 &ray) const -> SurfaceRayIntersection3 final;
 	auto _intersects_local(const mRay3 &ray) const -> bool final;
 	auto _bounding_box_local() const -> mBBox3 final;
-	auto _closest_point_local(const mVector3 &other_point) const -> mVector3 final;
-	auto _closest_intersection_local(const mRay3 &ray) const -> SurfaceRayIntersection3 final;
-	auto _closest_normal_local(const mVector3 &other_point) const -> mVector3 final;
 };
 
 class Sphere3 : public Surface3
@@ -80,11 +80,11 @@ public:
 	real _radius = 1;
 
 protected:
-	auto _intersects_local(const mRay3 &ray) const -> bool override;
-	auto _bounding_box_local() const -> mBBox3 override;
 	auto _closest_point_local(const mVector3 &other_point) const -> mVector3 override;
 	auto _closest_intersection_local(const mRay3 &ray) const -> SurfaceRayIntersection3 override;
 	auto _closest_normal_local(const mVector3 &other_point) const -> mVector3 override;
+	auto _intersects_local(const mRay3 &ray) const -> bool override;
+	auto _bounding_box_local() const -> mBBox3 override;
 };
 
 class Plane3 : public Surface3
@@ -95,21 +95,21 @@ public:
 	explicit Plane3(mVector3 point = mVector3::Zero(), mVector3 normal = mVector3::UnitY());
 
 protected:
-	auto _intersects_local(const mRay3 &ray) const -> bool override;
-	auto _bounding_box_local() const -> mBBox3 override;
 	auto _closest_point_local(const mVector3 &other_point) const -> mVector3 override;
 	auto _closest_intersection_local(const mRay3 &ray) const -> SurfaceRayIntersection3 override;
 	auto _closest_normal_local(const mVector3 &other_point) const -> mVector3 override;
+	auto _intersects_local(const mRay3 &ray) const -> bool override;
+	auto _bounding_box_local() const -> mBBox3 override;
 };
 
 class Cylinder3 : public Surface3
 {
 protected:
-	auto _intersects_local(const mRay3 &ray) const -> bool override;
-	auto _bounding_box_local() const -> mBBox3 override;
 	auto _closest_point_local(const mVector3 &other_point) const -> mVector3 override;
 	auto _closest_intersection_local(const mRay3 &ray) const -> SurfaceRayIntersection3 override;
 	auto _closest_normal_local(const mVector3 &other_point) const -> mVector3 override;
+	auto _intersects_local(const mRay3 &ray) const -> bool override;
+	auto _bounding_box_local() const -> mBBox3 override;
 };
 
 class ImplicitSurface3 : public Surface3
@@ -130,12 +130,12 @@ public:
 	explicit SurfaceToImplicit3(const std::shared_ptr<Surface3> &surface);
 
 protected:
-	auto _intersects_local(const mRay3 &ray) const -> bool final;
-	auto _bounding_box_local() const -> mBBox3 final;
 	auto _closest_point_local(const mVector3 &other_point) const -> mVector3 final;
 	auto _closest_intersection_local(const mRay3 &ray) const -> SurfaceRayIntersection3 final;
 	auto _closest_normal_local(const mVector3 &other_point) const -> mVector3 final;
 	auto _signed_distance_local(const mVector3 &other_point) const -> real final;
+	auto _intersects_local(const mRay3 &ray) const -> bool final;
+	auto _bounding_box_local() const -> mBBox3 final;
 
 private:
 	std::shared_ptr<Surface3> _surface;

@@ -15,7 +15,7 @@
 namespace HinaPE::Math
 {
 using namespace HinaPE::Geom;
-
+// @formatter:off
 template<typename T>
 class Transform3
 {
@@ -42,15 +42,15 @@ public:
 		}
 		return bbox_in_world;
 	}
-	inline auto to_local(const Ray3<T> &ray) const -> Ray3<T> { return {to_local(ray._origin), to_local(ray._direction)}; }
-	inline auto to_world(const Ray3<T> &ray) const -> Ray3<T> { return {to_world(ray._origin), to_world(ray._direction)}; }
-	inline auto to_local(const Vector3<T> &point_in_world) const -> Vector3<T> { return _inverse_orientation_mat3 * (point_in_world - _translation); }
-	inline auto to_world(const Vector3<T> &point_in_local) const -> Vector3<T> { return _orientation_mat3 * point_in_local + _translation; }
-	inline auto to_local_direction(const Vector3<T> &dir_in_world) const -> Vector3<T> { return _inverse_orientation_mat3 * dir_in_world; }
-	inline auto to_world_direction(const Vector3<T> &dir_in_local) const -> Vector3<T> { return _orientation_mat3 * dir_in_local; }
+	inline auto to_local(const Ray3<T> &ray) const -> Ray3<T> 							{ return {to_local(ray._origin), to_local(ray._direction)}; }
+	inline auto to_world(const Ray3<T> &ray) const -> Ray3<T> 							{ return {to_world(ray._origin), to_world(ray._direction)}; }
+	inline auto to_local(const Vector3<T> &point_in_world) const -> Vector3<T> 			{ return _inverse_orientation_mat3 * (point_in_world - _translation); }
+	inline auto to_world(const Vector3<T> &point_in_local) const -> Vector3<T> 			{ return _orientation_mat3 * point_in_local + _translation; }
+	inline auto to_local_direction(const Vector3<T> &dir_in_world) const -> Vector3<T> 	{ return _inverse_orientation_mat3 * dir_in_world; }
+	inline auto to_world_direction(const Vector3<T> &dir_in_local) const -> Vector3<T> 	{ return _orientation_mat3 * dir_in_local; }
 
 public:
-	explicit Transform3() = default;
+	explicit Transform3();
 	explicit Transform3(Vector3<T> t, Quaternion<T> q);
 
 public:
@@ -59,6 +59,13 @@ public:
 	Matrix3x3<T> _orientation_mat3;
 	Matrix3x3<T> _inverse_orientation_mat3;
 };
+template<typename T>
+Transform3<T>::Transform3() :
+		_translation(),
+		_orientation(1, 0, 0, 0),
+		_orientation_mat3(Matrix3x3<T>::Identity()),
+		_inverse_orientation_mat3(Matrix3x3<T>::Identity())
+{}
 
 template<typename T>
 Transform3<T>::Transform3(Vector3<T> t, Quaternion<T> q) :
@@ -66,8 +73,8 @@ Transform3<T>::Transform3(Vector3<T> t, Quaternion<T> q) :
 		_orientation(q),
 		_orientation_mat3(q.matrix3x3()),
 		_inverse_orientation_mat3(q.inverse().matrix3x3()) {}
-}
-
+} // namespace HinaPE::Math
+// @formatter:on
 #ifdef HINAPE_DOUBLE
 using mTransform3 = HinaPE::Math::Transform3<double>;
 #else
