@@ -16,7 +16,7 @@ file(GLOB_RECURSE
         "math/*.cpp" "math/*.h"
         "util/*.cpp" "util/*.h"
         "vendor/igl/*.cpp" "vendor/igl/*.h" # builtin dependency: igl
-        "vendor/json/*.cpp" "vendor/json/*.h" # builtin dependency: json
+        "vendor/json/*.cpp" "vendor/json/*.h" "vendor/json/*.hpp" # builtin dependency: json
         )
 
 add_library(HinaPE_Common STATIC ${src})

@@ -25,6 +25,8 @@ using real = float;
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <random>
 
 //@formatter:off
