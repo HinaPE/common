@@ -4,8 +4,6 @@
 // Copyright (c) 2023 Xayah Hina
 // MPL-2.0 license
 
-#include <utility>
-
 #include "surface3.h"
 
 namespace HinaPE::Geom
@@ -15,8 +13,6 @@ class Collider3
 public:
 	void load_surface(Surface3 *surface) { _surface = surface; }
 	void resolve_collision(real radius, real restitution, mVector3 &position, mVector3 &velocity) const;
-
-public:
 	void update(real current_time, real time_interval);
 	virtual auto velocity_at(const mVector3 &point) const -> mVector3 = 0;
 
