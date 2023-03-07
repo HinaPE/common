@@ -52,20 +52,20 @@ public:
 };
 
 //@formatter:off
-template<typename T> auto operator+(const Matrix3x3<T> &a) -> Matrix3x3<T> { return Matrix3x3<T>(a._m); }
-template<typename T> auto operator-(const Matrix3x3<T> &a) -> Matrix3x3<T> { return Matrix3x3<T>(-a._m); }
-template<typename T> auto operator+(const Matrix3x3<T> &a, const Matrix3x3<T> &b) -> Matrix3x3<T> { return Matrix3x3<T>(a._m + b._m); }
-template<typename T> auto operator+(const Matrix3x3<T> &a, T b) -> Matrix3x3<T> { return Matrix3x3<T>(a._m + b); }
-template<typename T> auto operator+(T a, const Matrix3x3<T> &b) -> Matrix3x3<T> { return Matrix3x3<T>(a + b._m); }
-template<typename T> auto operator-(const Matrix3x3<T> &a, const Matrix3x3<T> &b) -> Matrix3x3<T> { return Matrix3x3<T>(a._m - b._m); }
-template<typename T> auto operator-(const Matrix3x3<T> &a, T b) -> Matrix3x3<T> { return Matrix3x3<T>(a._m - b); }
-template<typename T> auto operator-(T a, const Matrix3x3<T> &b) -> Matrix3x3<T> { return Matrix3x3<T>(a - b._m); }
-template<typename T> auto operator*(const Matrix3x3<T>& a, T b) -> Matrix3x3<T> { return Matrix3x3<T>(a._m * b); }
-template<typename T> auto operator*(T a, const Matrix3x3<T>& b) -> Matrix3x3<T> { return Matrix3x3<T>(a * b._m); }
-template<typename T> auto operator*(const Matrix3x3<T>& a, const Vector3<T>& b) -> Vector3<T> { return Vector3<T>(a._m * b._v); }
-template<typename T> auto operator*(const Matrix3x3<T>& a, const Matrix3x3<T>& b) -> Matrix3x3<T> { return Matrix3x3<T>(a._m * b._m); }
-template<typename T> auto operator/(const Matrix3x3<T> &a, T b) -> Matrix3x3<T> { return Matrix3x3<T>(a._m / b); }
-template<typename T> auto operator/(T a, const Matrix3x3<T> &b) -> Matrix3x3<T> { return Matrix3x3<T>(a / b._m); }
+template<typename T> auto operator+(const Matrix3x3<T> &a) -> Matrix3x3<T>							{ return Matrix3x3<T>(a._m); }
+template<typename T> auto operator-(const Matrix3x3<T> &a) -> Matrix3x3<T>							{ return Matrix3x3<T>(-a._m); }
+template<typename T> auto operator+(const Matrix3x3<T> &a, const Matrix3x3<T> &b) -> Matrix3x3<T> 	{ return Matrix3x3<T>(a._m + b._m); }
+template<typename T> auto operator+(const Matrix3x3<T> &a, T b) -> Matrix3x3<T> 					{ return Matrix3x3<T>(a._m + b); }
+template<typename T> auto operator+(T a, const Matrix3x3<T> &b) -> Matrix3x3<T> 					{ return Matrix3x3<T>(a + b._m); }
+template<typename T> auto operator-(const Matrix3x3<T> &a, const Matrix3x3<T> &b) -> Matrix3x3<T> 	{ return Matrix3x3<T>(a._m - b._m); }
+template<typename T> auto operator-(const Matrix3x3<T> &a, T b) -> Matrix3x3<T> 					{ return Matrix3x3<T>(a._m - b); }
+template<typename T> auto operator-(T a, const Matrix3x3<T> &b) -> Matrix3x3<T> 					{ return Matrix3x3<T>(a - b._m); }
+template<typename T> auto operator*(const Matrix3x3<T>& a, T b) -> Matrix3x3<T> 					{ return Matrix3x3<T>(a._m * b); }
+template<typename T> auto operator*(T a, const Matrix3x3<T>& b) -> Matrix3x3<T> 					{ return Matrix3x3<T>(a * b._m); }
+template<typename T> auto operator*(const Matrix3x3<T>& a, const Vector3<T>& b) -> Vector3<T> 		{ return Vector3<T>(a._m * b._v); }
+template<typename T> auto operator*(const Matrix3x3<T>& a, const Matrix3x3<T>& b) -> Matrix3x3<T> 	{ return Matrix3x3<T>(a._m * b._m); }
+template<typename T> auto operator/(const Matrix3x3<T> &a, T b) -> Matrix3x3<T> 					{ return Matrix3x3<T>(a._m / b); }
+template<typename T> auto operator/(T a, const Matrix3x3<T> &b) -> Matrix3x3<T> 					{ return Matrix3x3<T>(a / b._m); }
 //@formatter:on
 
 
@@ -124,20 +124,20 @@ public:
 };
 
 //@formatter:off
-template<typename T> auto operator+(const Matrix4x4<T> &a) -> Matrix4x4<T> { return Matrix4x4<T>(a._m); }
-template<typename T> auto operator-(const Matrix4x4<T> &a) -> Matrix4x4<T> { return Matrix4x4<T>(-a._m); }
-template<typename T> auto operator+(const Matrix4x4<T> &a, const Matrix4x4<T> &b) -> Matrix4x4<T> { return Matrix4x4<T>(a._m + b._m); }
-template<typename T> auto operator+(const Matrix4x4<T> &a, T b) -> Matrix4x4<T> { return Matrix4x4<T>(a._m + b); }
-template<typename T> auto operator+(T a, const Matrix4x4<T> &b) -> Matrix4x4<T> { return Matrix4x4<T>(a + b._m); }
-template<typename T> auto operator-(const Matrix4x4<T> &a, const Matrix4x4<T> &b) -> Matrix4x4<T> { return Matrix4x4<T>(a._m - b._m); }
-template<typename T> auto operator-(const Matrix4x4<T> &a, T b) -> Matrix4x4<T> { return Matrix4x4<T>(a._m - b); }
-template<typename T> auto operator-(T a, const Matrix4x4<T> &b) -> Matrix4x4<T> { return Matrix4x4<T>(a - b._m); }
-template<typename T> auto operator*(const Matrix4x4<T>& a, T b) -> Matrix4x4<T> { return Matrix4x4<T>(a._m * b); }
-template<typename T> auto operator*(T a, const Matrix4x4<T>& b) -> Matrix4x4<T> { return Matrix4x4<T>(a * b._m); }
-template<typename T> auto operator*(const Matrix4x4<T>& a, const Vector4<T>& b) -> Vector4<T> { return Vector4<T>(a._m * b._v); }
-template<typename T> auto operator*(const Matrix4x4<T>& a, const Matrix4x4<T>& b) -> Matrix4x4<T> { return Matrix4x4<T>(a._m * b._m); }
-template<typename T> auto operator/(const Matrix4x4<T> &a, T b) -> Matrix4x4<T> { return Matrix4x4<T>(a._m / b); }
-template<typename T> auto operator/(T a, const Matrix4x4<T> &b) -> Matrix4x4<T> { return Matrix4x4<T>(a / b._m); }
+template<typename T> auto operator+(const Matrix4x4<T> &a) -> Matrix4x4<T> 							{ return Matrix4x4<T>(a._m); }
+template<typename T> auto operator-(const Matrix4x4<T> &a) -> Matrix4x4<T> 							{ return Matrix4x4<T>(-a._m); }
+template<typename T> auto operator+(const Matrix4x4<T> &a, const Matrix4x4<T> &b) -> Matrix4x4<T> 	{ return Matrix4x4<T>(a._m + b._m); }
+template<typename T> auto operator+(const Matrix4x4<T> &a, T b) -> Matrix4x4<T> 					{ return Matrix4x4<T>(a._m + b); }
+template<typename T> auto operator+(T a, const Matrix4x4<T> &b) -> Matrix4x4<T> 					{ return Matrix4x4<T>(a + b._m); }
+template<typename T> auto operator-(const Matrix4x4<T> &a, const Matrix4x4<T> &b) -> Matrix4x4<T> 	{ return Matrix4x4<T>(a._m - b._m); }
+template<typename T> auto operator-(const Matrix4x4<T> &a, T b) -> Matrix4x4<T> 					{ return Matrix4x4<T>(a._m - b); }
+template<typename T> auto operator-(T a, const Matrix4x4<T> &b) -> Matrix4x4<T> 					{ return Matrix4x4<T>(a - b._m); }
+template<typename T> auto operator*(const Matrix4x4<T>& a, T b) -> Matrix4x4<T> 					{ return Matrix4x4<T>(a._m * b); }
+template<typename T> auto operator*(T a, const Matrix4x4<T>& b) -> Matrix4x4<T> 					{ return Matrix4x4<T>(a * b._m); }
+template<typename T> auto operator*(const Matrix4x4<T>& a, const Vector4<T>& b) -> Vector4<T> 		{ return Vector4<T>(a._m * b._v); }
+template<typename T> auto operator*(const Matrix4x4<T>& a, const Matrix4x4<T>& b) -> Matrix4x4<T> 	{ return Matrix4x4<T>(a._m * b._m); }
+template<typename T> auto operator/(const Matrix4x4<T> &a, T b) -> Matrix4x4<T> 					{ return Matrix4x4<T>(a._m / b); }
+template<typename T> auto operator/(T a, const Matrix4x4<T> &b) -> Matrix4x4<T> 					{ return Matrix4x4<T>(a / b._m); }
 //@formatter:on
 
 

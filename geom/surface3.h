@@ -25,7 +25,7 @@ struct SurfaceRayIntersection3
 class Surface3
 {
 public:
-	void flip_normal() { _opt.normal_flipped = true; }
+	void flip_normal() { _opt.normal_flipped = true; } // flip normal to enable inside collider
 
 public:
 	virtual void update_query_engine() {}
@@ -52,9 +52,9 @@ protected:
 	virtual auto _bounding_box_local() const -> mBBox3 = 0;
 	virtual auto _closest_point_local(const mVector3 &other_point) const -> mVector3 = 0;
 	virtual auto _closest_intersection_local(const mRay3 &ray) const -> SurfaceRayIntersection3 = 0;
-	virtual auto _closest_distance_local(const mVector3 &other_point) const -> real = 0;
+	virtual auto _closest_distance_local(const mVector3 &other_point) const -> real;
 	virtual auto _closest_normal_local(const mVector3 &other_point) const -> mVector3 = 0;
-	inline virtual auto _is_inside_local(const mVector3 &other_point) const -> bool { return (other_point - _closest_point_local(other_point)).dot(_closest_normal_local(other_point)) < 0; }
+	virtual auto _is_inside_local(const mVector3 &other_point) const -> bool;
 
 public:
 	mTransform3 _transform;
@@ -71,7 +71,6 @@ protected:
 	auto _bounding_box_local() const -> mBBox3 final;
 	auto _closest_point_local(const mVector3 &other_point) const -> mVector3 final;
 	auto _closest_intersection_local(const mRay3 &ray) const -> SurfaceRayIntersection3 final;
-	auto _closest_distance_local(const mVector3 &other_point) const -> real final;
 	auto _closest_normal_local(const mVector3 &other_point) const -> mVector3 final;
 };
 
@@ -85,22 +84,21 @@ protected:
 	auto _bounding_box_local() const -> mBBox3 override;
 	auto _closest_point_local(const mVector3 &other_point) const -> mVector3 override;
 	auto _closest_intersection_local(const mRay3 &ray) const -> SurfaceRayIntersection3 override;
-	auto _closest_distance_local(const mVector3 &other_point) const -> real override;
 	auto _closest_normal_local(const mVector3 &other_point) const -> mVector3 override;
 };
 
 class Plane3 : public Surface3
 {
 public:
-	mVector3 _normal;
 	mVector3 _point;
+	mVector3 _normal;
+	explicit Plane3(mVector3 point = mVector3::Zero(), mVector3 normal = mVector3::UnitY());
 
 protected:
 	auto _intersects_local(const mRay3 &ray) const -> bool override;
 	auto _bounding_box_local() const -> mBBox3 override;
 	auto _closest_point_local(const mVector3 &other_point) const -> mVector3 override;
 	auto _closest_intersection_local(const mRay3 &ray) const -> SurfaceRayIntersection3 override;
-	auto _closest_distance_local(const mVector3 &other_point) const -> real override;
 	auto _closest_normal_local(const mVector3 &other_point) const -> mVector3 override;
 };
 
@@ -111,7 +109,6 @@ protected:
 	auto _bounding_box_local() const -> mBBox3 override;
 	auto _closest_point_local(const mVector3 &other_point) const -> mVector3 override;
 	auto _closest_intersection_local(const mRay3 &ray) const -> SurfaceRayIntersection3 override;
-	auto _closest_distance_local(const mVector3 &other_point) const -> real override;
 	auto _closest_normal_local(const mVector3 &other_point) const -> mVector3 override;
 };
 
@@ -151,6 +148,6 @@ using Sphere3Ptr            = std::shared_ptr<Sphere3>;
 using ImplicitSurface3Ptr   = std::shared_ptr<ImplicitSurface3>;
 using SurfaceToImplicit3Ptr = std::shared_ptr<SurfaceToImplicit3>;
 //@formatter:on
-}
+} // namespace HinaPE::Geom
 
 #endif //HINAPE_SURFACE3_H
