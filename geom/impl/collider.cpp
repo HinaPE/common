@@ -10,10 +10,10 @@ void HinaPE::Geom::Collider3::update(real current_time, real time_interval)
 	if (_on_begin_update_callback)
 		_on_begin_update_callback(this, current_time, time_interval);
 }
-void HinaPE::Geom::Collider3::resolve_collision(real radius, real restitution, mVector3 &position, mVector3 &velocity) const
+void HinaPE::Geom::Collider3::resolve_collision(real radius, real restitution, mVector3 *position, mVector3 *velocity) const
 {
-	auto result = get_closest_point(_surface, position);
-	if (is_penetrating(result, position, radius))
+	auto result = get_closest_point(_surface, *position);
+	if (is_penetrating(result, *position, radius))
 	{
 		// find the actual collision point of collision
 		mVector3 target_normal = result.normal;
@@ -21,7 +21,7 @@ void HinaPE::Geom::Collider3::resolve_collision(real radius, real restitution, m
 		mVector3 collider_velocity_at_target_point = velocity_at(target_point);
 
 		// get new candidate relative velocity from the target point
-		mVector3 relative_velocity = velocity - collider_velocity_at_target_point;
+		mVector3 relative_velocity = *velocity - collider_velocity_at_target_point;
 		real normal_dot_relative_velocity = target_normal.dot(relative_velocity);
 		mVector3 relative_velN = normal_dot_relative_velocity * target_normal;
 		mVector3 relative_velT = relative_velocity - relative_velN;
@@ -45,11 +45,11 @@ void HinaPE::Geom::Collider3::resolve_collision(real radius, real restitution, m
 				relative_velT *= friction_scale;
 			}
 
-			velocity = relative_velN + relative_velT + collider_velocity_at_target_point;
+			*velocity = relative_velN + relative_velT + collider_velocity_at_target_point;
 		}
 
 		// geometric fix
-		position = target_point;
+		*position = target_point;
 	}
 }
 auto HinaPE::Geom::Collider3::get_closest_point(Surface3 *surface, const mVector3 &query_point) const -> HinaPE::Geom::Collider3::ColliderQueryResult

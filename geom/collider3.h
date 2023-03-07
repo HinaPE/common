@@ -12,7 +12,7 @@ class Collider3
 {
 public:
 	void load_surface(Surface3 *surface) { _surface = surface; }
-	void resolve_collision(real radius, real restitution, mVector3 &position, mVector3 &velocity) const;
+	void resolve_collision(real radius, real restitution, mVector3 *position, mVector3 *velocity) const;
 	void update(real current_time, real time_interval);
 	virtual auto velocity_at(const mVector3 &point) const -> mVector3 = 0;
 
