@@ -102,7 +102,51 @@ auto HinaPE::Geom::Box3::_closest_intersection_local(const mRay3 &ray) const -> 
 }
 auto HinaPE::Geom::Box3::_closest_normal_local(const mVector3 &other_point) const -> mVector3
 {
-	return {};
+	std::array<Plane3, 6> planes = {
+			Plane3(_bound._upper_corner, mVector3(1, 0, 0)),
+			Plane3(_bound._upper_corner, mVector3(0, 1, 0)),
+			Plane3(_bound._upper_corner, mVector3(0, 0, 1)),
+			Plane3(_bound._lower_corner, mVector3(-1, 0, 0)),
+			Plane3(_bound._lower_corner, mVector3(0, -1, 0)),
+			Plane3(_bound._lower_corner, mVector3(0, 0, -1))
+	};
+	if (_bound.contains(other_point))
+	{
+		mVector3 closest_point = planes[0].closest_point(other_point);
+		mVector3 closest_normal = planes[0]._normal;
+		real min_distance_squared = (closest_point - other_point).length_squared();
+
+		for (int i = 1; i < 6; ++i)
+		{
+			mVector3 local_closest_point = planes[i].closest_point(other_point);
+			real local_distance_squared = (local_closest_point - other_point).length_squared();
+
+			if (local_distance_squared < min_distance_squared)
+			{
+				closest_normal = planes[i]._normal;
+				min_distance_squared = local_distance_squared;
+			}
+		}
+		return closest_normal;
+	} else
+	{
+		mVector3 closest_point = clamp(other_point, _bound._lower_corner, _bound._upper_corner);
+		mVector3 closest_point_to_input_point = other_point - closest_point;
+		mVector3 closest_normal = planes[0]._normal;
+		real max_cosine_angle = closest_normal.dot(closest_point_to_input_point);
+
+		for (int i = 1; i < 6; ++i)
+		{
+			real cosine_angle = planes[i]._normal.dot(closest_point_to_input_point);
+			if (cosine_angle > max_cosine_angle)
+			{
+				closest_normal = planes[i]._normal;
+				max_cosine_angle = cosine_angle;
+			}
+		}
+
+		return closest_normal;
+	}
 }
 
 // ============================== Sphere ==============================
