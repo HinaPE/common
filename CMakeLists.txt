@@ -17,19 +17,16 @@ file(GLOB_RECURSE
         "util/*.cpp" "util/*.h"
         "vendor/igl/*.cpp" "vendor/igl/*.h" # builtin dependency: igl
         "vendor/json/*.cpp" "vendor/json/*.h" "vendor/json/*.hpp" # builtin dependency: json
+        "vendor/nsearch/*.cpp" "vendor/nsearch/*.h" # builtin dependency: nsearch
         )
 
 add_library(HinaPE_Common STATIC ${src})
 set_target_properties(HinaPE_Common PROPERTIES CXX_STANDARD 20 CXX_EXTENSIONS ON)
-target_include_directories(HinaPE_Common PUBLIC . vendor)
-target_compile_definitions(HinaPE_Common PUBLIC HINAPE_DEBUG)
+target_include_directories(HinaPE_Common PUBLIC . vendor vendor/eigen3)
+target_compile_definitions(HinaPE_Common PUBLIC HINAPE_DEBUG HINA_EIGEN)
 if (HINAPE_DOUBLE)
-    target_compile_definitions(HinaPE_Common PUBLIC HINAPE_DOUBLE)
+    target_compile_definitions(HinaPE_Common PUBLIC HINAPE_DOUBLE USE_DOUBLE)
 endif ()
-
-# builtin dependency: Eigen3
-target_include_directories(HinaPE_Common PUBLIC vendor/eigen3)
-target_compile_definitions(HinaPE_Common PUBLIC HINA_EIGEN)
 
 # builtin dependency: google test
 if (HINAPE_UNIT_TEST)
@@ -55,3 +52,14 @@ if (OpenVDB_FOUND)
     target_compile_definitions(HinaPE_Common PUBLIC HINAPE_OPENVDB)
     target_link_libraries(HinaPE_Common PUBLIC OpenVDB::openvdb)
 endif ()
+
+if (UNIX)
+    find_package(OpenMP)
+    if (OPENMP_FOUND)
+        target_link_libraries(HinaPE_Common PUBLIC OpenMP::OpenMP_CXX)
+    endif(OPENMP_FOUND)
+endif (UNIX)
+if (APPLE AND CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    find_package(oneDPL REQUIRED)
+    target_link_libraries(HinaPE_Common PUBLIC oneDPL)
+endif()
