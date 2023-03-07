@@ -19,6 +19,7 @@ struct SurfaceRayIntersection3
 	real distance = std::numeric_limits<real>::max();
 	mVector3 point;
 	mVector3 normal;
+	unsigned int ID = std::numeric_limits<unsigned int>::max();
 };
 
 class Surface3
