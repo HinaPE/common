@@ -34,12 +34,12 @@ auto HinaPE::Geom::Box3::_closest_point_local(const mVector3 &other_point) const
 	if (_bound.contains(other_point))
 	{
 		std::array<Plane3, 6> planes = {
-				Plane3(mVector3(1, 0, 0), _bound._upper_corner),
-				Plane3(mVector3(0, 1, 0), _bound._upper_corner),
-				Plane3(mVector3(0, 0, 1), _bound._upper_corner),
-				Plane3(mVector3(-1, 0, 0), _bound._lower_corner),
-				Plane3(mVector3(0, -1, 0), _bound._lower_corner),
-				Plane3(mVector3(0, 0, -1), _bound._lower_corner)
+				Plane3(_bound._upper_corner, mVector3(1, 0, 0)),
+				Plane3(_bound._upper_corner, mVector3(0, 1, 0)),
+				Plane3(_bound._upper_corner, mVector3(0, 0, 1)),
+				Plane3(_bound._lower_corner, mVector3(-1, 0, 0)),
+				Plane3(_bound._lower_corner, mVector3(0, -1, 0)),
+				Plane3(_bound._lower_corner, mVector3(0, 0, -1))
 		};
 
 		mVector3 res = planes[0].closest_point(other_point);
@@ -128,9 +128,7 @@ auto HinaPE::Geom::Sphere3::_closest_normal_local(const mVector3 &other_point) c
 }
 
 // ============================== Plane ==============================
-HinaPE::Geom::Plane3::Plane3(mVector3 point, mVector3 normal) : _point(std::move(point)), _normal(std::move(normal))
-{
-}
+HinaPE::Geom::Plane3::Plane3(mVector3 point, mVector3 normal) : _point(std::move(point)), _normal(std::move(normal)) {}
 auto HinaPE::Geom::Plane3::_intersects_local(const mRay3 &ray) const -> bool
 {
 	return std::fabs(ray._direction.dot(_normal)) > 0;
