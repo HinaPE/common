@@ -9,7 +9,7 @@
 #define IGL_RAY_MESH_INTERSECT_H
 #include "igl_inline.h"
 #include "Hit.h"
-#include <Eigen/Core>
+#include "vendor/eigen3/Eigen/Core"
 #include <vector>
 
 /* Ray-Triangle Intersection Test Routines          */

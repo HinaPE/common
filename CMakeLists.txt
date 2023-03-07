@@ -15,12 +15,13 @@ file(GLOB_RECURSE
         "geom/*.cpp" "geom/*.h"
         "math/*.cpp" "math/*.h"
         "util/*.cpp" "util/*.h"
-        "igl/*.cpp" "igl/*.h"
+        "vendor/igl/*.cpp" "vendor/igl/*.h" # builtin dependency: igl
+        "vendor/json/*.cpp" "vendor/json/*.h" # builtin dependency: json
         )
 
 add_library(HinaPE_Common STATIC ${src})
 set_target_properties(HinaPE_Common PROPERTIES CXX_STANDARD 20 CXX_EXTENSIONS ON)
-target_include_directories(HinaPE_Common PUBLIC .)
+target_include_directories(HinaPE_Common PUBLIC . vendor)
 target_compile_definitions(HinaPE_Common PUBLIC HINAPE_DEBUG)
 if (HINAPE_DOUBLE)
     target_compile_definitions(HinaPE_Common PUBLIC HINAPE_DOUBLE)
