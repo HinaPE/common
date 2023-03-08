@@ -1,12 +1,10 @@
 #pragma once
 
+#include "../math/math_ext.h"
+
 namespace CompactNSearch
 {
-#ifdef USE_DOUBLE
-	using Real = double;
-#else
-	using Real = float;
-#endif
+using Real = real;
 }
 
 #define INITIAL_NUMBER_OF_INDICES   50
