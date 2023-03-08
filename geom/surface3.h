@@ -18,6 +18,7 @@ struct SurfaceRayIntersection3
 	mVector3 point;
 	mVector3 normal;
 	unsigned int ID = std::numeric_limits<unsigned int>::max();
+	unsigned int particleID = std::numeric_limits<unsigned int>::max(); // only for particle objects
 };
 
 // @formatter:off
