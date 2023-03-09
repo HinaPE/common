@@ -43,8 +43,8 @@ void set_max_number_of_threads(unsigned int num_threads);
 auto max_number_of_threads() -> unsigned int;
 }
 #ifdef HINAPE_TBB
-//#include "impl/parallel_impl_tbb.h"
-//#else
+#include "impl/parallel_impl_tbb.h"
+#else
 #include "impl/parallel_impl_cpp.h"
 #endif
 #endif //HINAPE_PARALLEL_H
