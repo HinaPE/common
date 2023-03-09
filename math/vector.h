@@ -39,6 +39,7 @@ public:
 	auto tangential() const -> std::tuple<Vector3, Vector3>;
 	auto reciprocal() const -> Vector3;
 	auto data() -> T *;
+	auto data() const -> const T *;
 
 public:
 	static inline constexpr auto Zero() -> Vector3 { return Vector3(0, 0, 0); }
@@ -101,8 +102,8 @@ template<typename T> auto min(const Vector3<T> &a, const Vector3<T> &b) -> Vecto
 template<typename T> auto clamp(const Vector3<T> &v, const Vector3<T> &low, const Vector3<T> &high) -> Vector3<T> { return { clamp(v.x(), low.x(), high.x()), clamp(v.y(), low.y(), high.y()), clamp(v.z(), low.z(), high.z()) }; }
 template<typename T> auto ceil(const Vector3<T> &a) -> Vector3<T> { return { std::ceil(a.x()), std::ceil(a.y()), std::ceil(a.z()) }; }
 template<typename T> auto floor(const Vector3<T> &a) -> Vector3<T> { return { std::floor(a.x()), std::floor(a.y()), std::floor(a.z()) }; }
+template<typename T> auto operator<<(std::ostream &os, const Vector3<T> &v) -> std::ostream & { return os << "[" << v.x() << " " << v.y() << " " << v.z() << "]"; }
 //@formatter:on
-
 
 // ============================== Vector2 ==============================
 template<typename T>
@@ -183,6 +184,7 @@ template<typename T> auto min(const Vector2<T> &a, const Vector2<T> &b) -> Vecto
 template<typename T> auto clamp(const Vector2<T> &v, const Vector2<T> &low, const Vector2<T> &high) -> Vector2<T> { return { clamp(v.x(), low.x(), high.x()), clamp(v.y(), low.y(), high.y()) }; }
 template<typename T> auto ceil(const Vector2<T> &a) -> Vector2<T> { return { std::ceil(a.x()), std::ceil(a.y()) }; }
 template<typename T> auto floor(const Vector2<T> &a) -> Vector2<T> { return { std::floor(a.x()), std::floor(a.y()) }; }
+template<typename T> auto operator<<(std::ostream &os, const Vector2<T> &v) -> std::ostream & { return os << "[" << v.x() << ", " << v.y() << "]"; }
 //@formatter:on
 
 
@@ -270,6 +272,7 @@ template<typename T> auto min(const Vector4<T> &a, const Vector4<T> &b) -> Vecto
 template<typename T> auto clamp(const Vector4<T> &v, const Vector4<T> &low, const Vector4<T> &high) -> Vector4<T> { return { clamp(v.x(), low.x(), high.x()), clamp(v.y(), low.y(), high.y()), clamp(v.z(), low.z(), high.z()), clamp(v.w(), low.w(), high.w()) }; }
 template<typename T> auto ceil(const Vector4<T> &a) -> Vector4<T> { return { std::ceil(a.x()), std::ceil(a.y()), std::ceil(a.z()), std::ceil(a.w()) }; }
 template<typename T> auto floor(const Vector4<T> &a) -> Vector4<T> { return { std::floor(a.x()), std::floor(a.y()), std::floor(a.z()), std::floor(a.w()) }; }
+template<typename T> auto operator<<(std::ostream &os, const Vector4<T> &v) -> std::ostream& { return os << "[" << v.x() << ", " << v.y() << ", " << v.z() << ", " << v.w() << "]"; }
 //@formatter:on
 
 }
