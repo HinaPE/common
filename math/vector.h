@@ -321,6 +321,24 @@ static mVector3 NO_COLORS = mVector3(0.0f   , 0.0f   , 0.0f);
 namespace HinaPE::Math
 {
 template<typename T>
+auto similar(const Vector3<T> &a, const Vector3<T> &b) -> bool
+{
+	auto eps = static_cast<T>(1e-2);
+	return similar(a.x(), b.x(), eps) && similar(a.y(), b.y(), eps) && similar(a.z(), b.z(), eps);
+}
+template<typename T>
+auto similar(const Vector2<T> &a, const Vector2<T> &b) -> bool
+{
+	auto eps = static_cast<T>(1e-2);
+	return similar(a.x(), b.x(), eps) && similar(a.y(), b.y(), eps);
+}
+template<typename T>
+auto similar(const Vector4<T> &a, const Vector4<T> &b) -> bool
+{
+	auto eps = static_cast<T>(1e-2);
+	return similar(a.x(), b.x(), eps) && similar(a.y(), b.y(), eps) && similar(a.z(), b.z(), eps) && similar(a.w(), b.w(), eps);
+}
+template<typename T>
 inline auto uniform_sample_cone(T u1, T u2, const mVector3 &axis, T angle) -> mVector3
 {
 	T cos_angle_2 = std::cos(degrees_to_radians(angle) / 2);
