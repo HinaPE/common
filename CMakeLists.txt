@@ -18,6 +18,7 @@ file(GLOB_RECURSE
         "vendor/igl/*.cpp" "vendor/igl/*.h" # builtin dependency: igl
         "vendor/json/*.cpp" "vendor/json/*.h" "vendor/json/*.hpp" # builtin dependency: json
         "vendor/nsearch/*.cpp" "vendor/nsearch/*.h" # builtin dependency: nsearch
+        "vendor/cppoptlib/*.cpp" "vendor/cppoptlib/*.h" # builtin dependency: cppoptlib
         )
 
 add_library(HinaPE_Common STATIC ${src})
