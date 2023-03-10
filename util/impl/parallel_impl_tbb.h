@@ -91,7 +91,7 @@ void parallelFill(const RandomIterator &begin, const RandomIterator &end, const 
 		return;
 
 	auto size = static_cast<size_t>(diff);
-	parallelFor(HinaPE::Constant::ZeroSize, size, [begin, value](size_t i) { begin[i] = value; }, policy);
+	parallelFor(static_cast<size_t>(0), size, [begin, value](size_t i) { begin[i] = value; }, policy);
 }
 template<typename IndexType, typename Value, typename Function, typename Reduce>
 auto parallelReduce(IndexType begin_index, IndexType end_index, const Value &identity, const Function &func, const Reduce &reduce, ExecutionPolicy policy) -> Value

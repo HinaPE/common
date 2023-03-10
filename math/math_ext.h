@@ -52,6 +52,7 @@ static constexpr real Sqrt2        = static_cast<real>(1.4142135623730950488);
 static constexpr real Sqrt3        = static_cast<real>(1.7320508075688772935);
 static constexpr real SqrtHalf     = static_cast<real>(0.7071067811865475244);
 static constexpr size_t ZeroSize   = 0;
+static constexpr size_t OneSize    = 1;
 static constexpr real I_REAL_MIN   = -std::numeric_limits<real>::max();
 static constexpr real I_REAL_MAX   = std::numeric_limits<real>::max();
 static constexpr int I_INT_MIN     = -std::numeric_limits<int>::max();
