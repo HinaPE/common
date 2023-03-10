@@ -72,5 +72,14 @@ void parallelRangeFor(IndexType begin_indexX, IndexType end_indexX, IndexType be
 					 },
 					 policy);
 }
-}
+
+template<typename RandomIterator, typename T>
+void parallelFill(const RandomIterator &begin, const RandomIterator &end, const T &value, ExecutionPolicy policy) {}
+template<typename IndexType, typename Value, typename Function, typename Reduce>
+auto parallelReduce(IndexType begin_index, IndexType end_index, const Value &identity, const Function &func, const Reduce &reduce, ExecutionPolicy) -> Value {}
+template<typename RandomIterator>
+void parallelSort(RandomIterator begin, RandomIterator end, ExecutionPolicy policy) {}
+template<typename RandomIterator, typename CompareFunction>
+void parallelSort(RandomIterator begin, RandomIterator end, CompareFunction compare, ExecutionPolicy policy) {}
+} // namespace HinaPE::Util
 #endif //HINAPE_PARALLEL_IMPL_CPP_H
