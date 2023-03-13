@@ -33,7 +33,7 @@ public:
 	auto dot(const Vector3 &v) const -> T;
 	auto cross(const Vector3 &v) const -> Vector3;
 	auto length() const -> T;
-	auto length_squared() -> T;
+	auto length_squared() const -> T;
 	void normalize();
 	auto normalized() const -> Vector3;
 	auto tangential() const -> std::tuple<Vector3, Vector3>;
@@ -123,7 +123,7 @@ public:
 	auto dot(const Vector2 &v) const -> T;
 	auto cross(const Vector2 &v) const -> Vector2;
 	auto length() const -> T;
-	auto length_squared() -> T;
+	auto length_squared() const -> T;
 	void normalize();
 	auto normalized() const -> Vector2;
 
@@ -210,7 +210,7 @@ public:
 	auto dot(const Vector4 &v) const -> T;
 	auto cross(const Vector4 &v) const -> Vector4;
 	auto length() const -> T;
-	auto length_squared() -> T;
+	auto length_squared() const -> T;
 	void normalize();
 	auto normalized() const -> Vector4;
 	auto xyz() const -> Vector3<T>;
