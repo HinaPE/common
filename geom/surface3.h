@@ -28,15 +28,17 @@ public:
 	void flip_normal() { _opt.normal_flipped = true; } // flip normal to enable inside collider
 
 public:
-	virtual void update_query_engine() {}
+	virtual void update_query_engine() 											{}
 	virtual auto is_bounded() -> bool 											{ return true; }
 	virtual auto is_valid_geometry() -> bool 									{ return true; }
+	inline auto is_bound() const -> bool 										{ return true; }
 	inline auto intersects(const mRay3 &ray) const -> bool 						{ return _intersects_local(_transform.to_local(ray)); }
 	inline auto bounding_box() const -> mBBox3 									{ return _transform.to_world(_bounding_box_local()); }
 	inline auto closest_point(const mVector3 &other_point) const -> mVector3 	{ return _transform.to_world(_closest_point_local(_transform.to_local(other_point))); }
 	inline auto closest_distance(const mVector3 &other_point) const -> real 	{ return _closest_distance_local(_transform.to_local(other_point)); }
 	inline auto closest_normal(const mVector3 &other_point) const -> mVector3 	{ return ((_opt.normal_flipped) ? -Constant::One : Constant::One) * _transform.to_world_direction(_closest_normal_local(_transform.to_local(other_point))); }
 	inline auto is_inside(const mVector3 &point) -> bool 						{ return _opt.normal_flipped == !_is_inside_local(_transform.to_local(point)); }
+	inline auto closest_intersection(const mRay3 &ray) const -> SurfaceRayIntersection3 { auto res = _closest_intersection_local(_transform.to_local(ray)); res.point = _transform.to_world(res.point); res.normal = ((_opt.normal_flipped) ? -Constant::One : Constant::One) * _transform.to_world_direction(res.normal); return res; }
 
 public:
 	struct Opt
@@ -120,8 +122,8 @@ public:
 	auto signed_distance(const mVector3 &other_point) const -> real { return _opt.normal_flipped ? -_signed_distance_local(_transform.to_local(other_point)) : _signed_distance_local(_transform.to_local(other_point)); }
 
 protected:
-	auto _closest_distance_local(const mVector3 &other_point) const -> real final { return std::fabs(_signed_distance_local(other_point)); }
-	auto _is_inside_local(const mVector3 &other_point) const -> bool final { return Math::is_inside_sdf(_signed_distance_local(other_point)); }
+	auto _closest_distance_local(const mVector3 &other_point) const -> real override { return std::fabs(_signed_distance_local(other_point)); }
+	auto _is_inside_local(const mVector3 &other_point) const -> bool override { return Math::is_inside_sdf(_signed_distance_local(other_point)); }
 
 	virtual auto _signed_distance_local(const mVector3 &other_point) const -> real = 0;
 };
@@ -130,6 +132,9 @@ class SurfaceToImplicit3 : public ImplicitSurface3
 {
 public:
 	explicit SurfaceToImplicit3(const std::shared_ptr<Surface3> &surface);
+	void update_query_engine() override;
+	auto is_valid_geometry() -> bool override;
+	auto is_bounded() -> bool final;
 
 protected:
 	auto _closest_point_local(const mVector3 &other_point) const -> mVector3 final;
@@ -138,6 +143,10 @@ protected:
 	auto _signed_distance_local(const mVector3 &other_point) const -> real final;
 	auto _intersects_local(const mRay3 &ray) const -> bool final;
 	auto _bounding_box_local() const -> mBBox3 final;
+
+	// ImplicitSurface3
+	auto _closest_distance_local(const mVector3 &other_point) const -> real override;
+	auto _is_inside_local(const mVector3 &other_point) const -> bool override;
 
 private:
 	std::shared_ptr<Surface3> _surface;

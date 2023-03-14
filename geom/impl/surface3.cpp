@@ -267,9 +267,20 @@ auto HinaPE::Geom::Cylinder3::_closest_normal_local(const mVector3 &other_point)
 
 // ============================== SurfaceToImplicit3 ==============================
 HinaPE::Geom::SurfaceToImplicit3::SurfaceToImplicit3(const std::shared_ptr<Surface3> &surface) : _surface(surface) {}
-auto HinaPE::Geom::SurfaceToImplicit3::_intersects_local(const mRay3 &ray) const -> bool { return false; }
-auto HinaPE::Geom::SurfaceToImplicit3::_bounding_box_local() const -> mBBox3 { return {}; }
-auto HinaPE::Geom::SurfaceToImplicit3::_closest_point_local(const mVector3 &other_point) const -> mVector3 { return {}; }
-auto HinaPE::Geom::SurfaceToImplicit3::_closest_intersection_local(const mRay3 &ray) const -> HinaPE::Geom::SurfaceRayIntersection3 { return {}; }
-auto HinaPE::Geom::SurfaceToImplicit3::_closest_normal_local(const mVector3 &other_point) const -> mVector3 { return {}; }
-auto HinaPE::Geom::SurfaceToImplicit3::_signed_distance_local(const mVector3 &other_point) const -> real { return 0; }
+auto HinaPE::Geom::SurfaceToImplicit3::is_bounded() -> bool { return _surface->is_bound(); }
+void HinaPE::Geom::SurfaceToImplicit3::update_query_engine() { _surface->update_query_engine(); }
+auto HinaPE::Geom::SurfaceToImplicit3::is_valid_geometry() -> bool { return _surface->is_valid_geometry(); }
+auto HinaPE::Geom::SurfaceToImplicit3::_closest_point_local(const mVector3 &other_point) const -> mVector3 { return _surface->closest_point(other_point); }
+auto HinaPE::Geom::SurfaceToImplicit3::_closest_intersection_local(const mRay3 &ray) const -> HinaPE::Geom::SurfaceRayIntersection3 { return _surface->closest_intersection(ray); }
+auto HinaPE::Geom::SurfaceToImplicit3::_closest_normal_local(const mVector3 &other_point) const -> mVector3 { return _surface->closest_normal(other_point); }
+auto HinaPE::Geom::SurfaceToImplicit3::_signed_distance_local(const mVector3 &other_point) const -> real
+{
+	mVector3 x = _surface->closest_point(other_point);
+	bool inside = _surface->is_inside(other_point);
+	real d = (x - other_point).length();
+	return inside ? -d : d;
+}
+auto HinaPE::Geom::SurfaceToImplicit3::_intersects_local(const mRay3 &ray) const -> bool { return _surface->intersects(ray); }
+auto HinaPE::Geom::SurfaceToImplicit3::_bounding_box_local() const -> mBBox3 { return _surface->bounding_box(); }
+auto HinaPE::Geom::SurfaceToImplicit3::_closest_distance_local(const mVector3 &other_point) const -> real { return _surface->closest_distance(other_point); }
+auto HinaPE::Geom::SurfaceToImplicit3::_is_inside_local(const mVector3 &other_point) const -> bool { return _surface->is_inside(other_point); }
