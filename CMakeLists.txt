@@ -8,20 +8,19 @@ if (MSVC)
     add_compile_options(/wd4819 /wd4244)
 endif ()
 
-file(GLOB_RECURSE
-        src
-        "common.h"
-        "animation/*.cpp" "animation/*.h"
-        "geom/*.cpp" "geom/*.h"
-        "math/*.cpp" "math/*.h"
-        "util/*.cpp" "util/*.h"
-        "vendor/igl/*.cpp" "vendor/igl/*.h" # builtin dependency: igl
-        "vendor/json/*.cpp" "vendor/json/*.h" "vendor/json/*.hpp" # builtin dependency: json
-        "vendor/nsearch/*.cpp" "vendor/nsearch/*.h" # builtin dependency: nsearch
-        "vendor/cppoptlib/*.cpp" "vendor/cppoptlib/*.h" # builtin dependency: cppoptlib
-        )
+add_library(HinaPE_Common STATIC)
+file(GLOB_RECURSE headers common.h animation/*.h geom/*.h math/*.h util/*.h vendor/igl/*.h vendor/json/*.h vendor/nsearch/*.h vendor/cppoptlib/*.h)
+file(GLOB_RECURSE sources animation/*.cpp geom/*.cpp math/*.cpp util/*.cpp vendor/igl/*.cpp vendor/json/*.cpp vendor/nsearch/*.cpp vendor/cppoptlib/*.cpp)
+target_sources(HinaPE_Common
+        PRIVATE
+        ${sources}
 
-add_library(HinaPE_Common STATIC ${src})
+        PUBLIC
+        FILE_SET HEADERS
+        BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/../
+        FILES
+        ${headers}
+        )
 set_target_properties(HinaPE_Common PROPERTIES CXX_STANDARD 20 CXX_EXTENSIONS ON)
 target_include_directories(HinaPE_Common PUBLIC . vendor vendor/eigen3)
 target_compile_definitions(HinaPE_Common PUBLIC HINAPE_DEBUG HINA_EIGEN)
