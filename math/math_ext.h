@@ -392,5 +392,10 @@ auto random_real(auto l = 0, auto u = 1) -> auto
 	std::uniform_real_distribution<> dis(l, u);
 	return dis(gen);
 }
+
+auto to_string(auto info) -> std::string
+{
+	return std::to_string(info);
+}
 } // namespace HinaPE::Math
 #endif //HINAPE_MATH_EXT_H

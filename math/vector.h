@@ -103,6 +103,7 @@ template<typename T> auto clamp(const Vector3<T> &v, const Vector3<T> &low, cons
 template<typename T> auto ceil(const Vector3<T> &a) -> Vector3<T> { return { std::ceil(a.x()), std::ceil(a.y()), std::ceil(a.z()) }; }
 template<typename T> auto floor(const Vector3<T> &a) -> Vector3<T> { return { std::floor(a.x()), std::floor(a.y()), std::floor(a.z()) }; }
 template<typename T> auto operator<<(std::ostream &os, const Vector3<T> &v) -> std::ostream & { return os << "[" << v.x() << " " << v.y() << " " << v.z() << "]"; }
+template<typename T> auto to_string(const Vector3<T> &v) -> std::string { return "[" + std::to_string(v.x()) + " " + std::to_string(v.y()) + " " + std::to_string(v.z()) + "]"; }
 //@formatter:on
 
 // ============================== Vector2 ==============================
@@ -185,6 +186,7 @@ template<typename T> auto clamp(const Vector2<T> &v, const Vector2<T> &low, cons
 template<typename T> auto ceil(const Vector2<T> &a) -> Vector2<T> { return { std::ceil(a.x()), std::ceil(a.y()) }; }
 template<typename T> auto floor(const Vector2<T> &a) -> Vector2<T> { return { std::floor(a.x()), std::floor(a.y()) }; }
 template<typename T> auto operator<<(std::ostream &os, const Vector2<T> &v) -> std::ostream & { return os << "[" << v.x() << ", " << v.y() << "]"; }
+template<typename T> auto to_string(const Vector2<T> &v) -> std::string { return "[" + std::to_string(v.x()) + ", " + std::to_string(v.y()) + "]"; }
 //@formatter:on
 
 
@@ -273,6 +275,7 @@ template<typename T> auto clamp(const Vector4<T> &v, const Vector4<T> &low, cons
 template<typename T> auto ceil(const Vector4<T> &a) -> Vector4<T> { return { std::ceil(a.x()), std::ceil(a.y()), std::ceil(a.z()), std::ceil(a.w()) }; }
 template<typename T> auto floor(const Vector4<T> &a) -> Vector4<T> { return { std::floor(a.x()), std::floor(a.y()), std::floor(a.z()), std::floor(a.w()) }; }
 template<typename T> auto operator<<(std::ostream &os, const Vector4<T> &v) -> std::ostream& { return os << "[" << v.x() << ", " << v.y() << ", " << v.z() << ", " << v.w() << "]"; }
+template<typename T> auto to_string(const Vector4<T> &v) -> std::string { return "[" + std::to_string(v.x()) + ", " + std::to_string(v.y()) + ", " + std::to_string(v.z()) + ", " + std::to_string(v.w()) + "]"; }
 //@formatter:on
 
 }
