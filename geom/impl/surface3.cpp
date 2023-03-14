@@ -150,11 +150,66 @@ auto HinaPE::Geom::Box3::_closest_normal_local(const mVector3 &other_point) cons
 }
 
 // ============================== Sphere ==============================
-auto HinaPE::Geom::Sphere3::_intersects_local(const mRay3 &ray) const -> bool { return false; }
-auto HinaPE::Geom::Sphere3::_bounding_box_local() const -> mBBox3 { return {}; }
-auto HinaPE::Geom::Sphere3::_closest_point_local(const mVector3 &other_point) const -> mVector3 { return {}; }
-auto HinaPE::Geom::Sphere3::_closest_intersection_local(const mRay3 &ray) const -> HinaPE::Geom::SurfaceRayIntersection3 { return {}; }
-auto HinaPE::Geom::Sphere3::_closest_normal_local(const mVector3 &other_point) const -> mVector3 { return {}; }
+auto HinaPE::Geom::Sphere3::_closest_point_local(const mVector3 &other_point) const -> mVector3 { return _radius * _closest_normal_local(other_point) + _center; }
+auto HinaPE::Geom::Sphere3::_closest_intersection_local(const mRay3 &ray) const -> HinaPE::Geom::SurfaceRayIntersection3
+{
+	HinaPE::Geom::SurfaceRayIntersection3 res;
+	mVector3 r = ray._origin - _center;
+	real b = r.dot(ray._direction);
+	real c = r.dot(r) - _radius * _radius;
+	real d = b * b - c;
+
+	if (d > Constant::Zero)
+	{
+		d = std::sqrt(d);
+		real t_min = -b - d;
+		real t_max = -b + d;
+
+		if (t_min < Constant::Zero)
+			t_min = t_max;
+
+		if (t_min < 0)
+			res.is_intersecting = false;
+		else
+		{
+			res.is_intersecting = true;
+			res.distance = t_min;
+			res.point = ray.point_at(t_min);
+			res.normal = (res.point - _center).normalized();
+		}
+	} else
+		res.is_intersecting = false;
+	return res;
+}
+auto HinaPE::Geom::Sphere3::_closest_normal_local(const mVector3 &other_point) const -> mVector3
+{
+	if (similar(_center, other_point))
+		return mVector3::UnitY();
+	else
+		return (other_point - _center).normalized();
+}
+auto HinaPE::Geom::Sphere3::_intersects_local(const mRay3 &ray) const -> bool
+{
+	mVector3 r = ray._origin - _center;
+	real b = r.dot(ray._direction);
+	real c = r.dot(r) - _radius * _radius;
+	real d = b * b - c;
+
+	if (d > Constant::Zero)
+	{
+		d = std::sqrt(d);
+		real t_min = -b - d;
+		real t_max = -b + d;
+
+		if (t_min < Constant::Zero)
+			t_min = t_max;
+
+		if (t_min > 0)
+			return true;
+	}
+	return false;
+}
+auto HinaPE::Geom::Sphere3::_bounding_box_local() const -> mBBox3 { return {_center - mVector3(_radius, _radius, _radius), _center + mVector3(_radius, _radius, _radius)}; }
 
 // ============================== Plane ==============================
 HinaPE::Geom::Plane3::Plane3(mVector3 point, mVector3 normal) : _point(std::move(point)), _normal(std::move(normal)) {}

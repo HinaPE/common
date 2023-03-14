@@ -78,6 +78,7 @@ protected:
 class Sphere3 : public Surface3
 {
 public:
+	mVector3 _center;
 	real _radius = 1;
 
 protected:
