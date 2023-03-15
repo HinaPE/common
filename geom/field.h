@@ -17,7 +17,7 @@ public:
 	virtual auto gradient(const mVector3 &x) const -> mVector3 = 0;
 	virtual auto laplacian(const mVector3 &x) const -> real = 0;
 };
-class ConstantScalarField3 final : public ScalarField3
+class ConstantScalarField3 : public ScalarField3
 {
 public:
 	auto sample(const mVector3 &x) const -> real final { return _value; }
@@ -29,7 +29,7 @@ public:
 private:
 	real _value = Constant::Zero;
 };
-class CustomScalarField3 final : public ScalarField3
+class CustomScalarField3 : public ScalarField3
 {
 public:
 	auto sample(const mVector3 &x) const -> real final { return _custom_function(x); }
@@ -55,7 +55,7 @@ public:
 	virtual auto divergence(const mVector3 &x) const -> real = 0;
 	virtual auto curl(const mVector3 &x) const -> mVector3 = 0;
 };
-class ConstantVectorField3 final : public VectorField3
+class ConstantVectorField3 : public VectorField3
 {
 public:
 	auto sample(const mVector3 &x) const -> mVector3 final { return _value; }
@@ -67,7 +67,7 @@ public:
 private:
 	mVector3 _value = mVector3::Zero();
 };
-class CustomVectorField3 final : public VectorField3
+class CustomVectorField3 : public VectorField3
 {
 public:
 	auto sample(const mVector3 &x) const -> mVector3 final { return _custom_function(x); }
