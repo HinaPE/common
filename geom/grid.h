@@ -82,7 +82,6 @@ public: // math
 	auto data_position() const -> DataPositionFunc { return [this](size_t i, size_t j, size_t k) -> mVector3 { return _opt.origin + _opt.grid_spacing * mVector3({i, j, k}); }; }
 	virtual inline auto data_size() const -> mSize3 = 0; /// not necessarily equal to _opt.resolution
 	virtual inline auto data_origin() const -> mVector3 = 0; /// not necessarily equal to _opt.origin
-	virtual auto clone() const -> std::shared_ptr<ScalarGrid3> = 0;
 	void resize(const mSize3 &resolution, const mVector3 &grid_spacing, const mVector3 &origin, real initial_value);
 	void clear() { resize(mSize3(0, 0, 0), _opt.grid_spacing, _opt.origin, Constant::Zero); }
 
@@ -101,14 +100,12 @@ class CellCenteredScalarGrid3 : public ScalarGrid3
 public:
 	inline auto data_size() const -> mSize3 final { return _opt.resolution; }
 	inline auto data_origin() const -> mVector3 final { return _opt.origin + Constant::Half * _opt.grid_spacing; }
-	auto clone() const -> std::shared_ptr<ScalarGrid3> final { new CellCenteredScalarGrid3(*this), [](CellCenteredScalarGrid3 *obj) { delete obj; }; }
 };
 class VertexCenteredScalarGrid3 : public ScalarGrid3
 {
 public:
 	inline auto data_size() const -> mSize3 final { return _opt.resolution + mSize3(1, 1, 1); }
 	inline auto data_origin() const -> mVector3 final { return _opt.origin; }
-	auto clone() const -> std::shared_ptr<ScalarGrid3> final { new VertexCenteredScalarGrid3(*this), [](VertexCenteredScalarGrid3 *obj) { delete obj; }; }
 };
 // ============================== ScalarGrid3 ==============================
 
@@ -120,7 +117,6 @@ class VectorGrid3 : public Grid3, public VectorField3
 public:
 	virtual void fill(const mVector3 &value, Util::ExecutionPolicy policy) = 0;
 	virtual void fill(const std::function<mVector3(const mVector3 &)> &func, Util::ExecutionPolicy policy) = 0;
-	virtual auto clone() -> std::shared_ptr<VectorGrid3> = 0;
 public: // implement VectorField3
 	/* NOT IMPLEMENTED */ auto sample(const mVector3 &x) const -> mVector3 final { return mVector3::Zero(); }
 	/* NOT IMPLEMENTED */ auto sampler() const -> std::function<mVector3(const mVector3 &)> final { return [this](const mVector3 &x) { return sample(x); }; }
@@ -148,10 +144,6 @@ public:
 	void fill(const std::function<mVector3(const mVector3 &)> &func, Util::ExecutionPolicy policy) override
 	{
 	}
-	auto clone() -> std::shared_ptr<VectorGrid3> override
-	{
-		return {new CellCenteredVectorGrid3(*this), [](CellCenteredVectorGrid3 *obj) { delete obj; }};
-	}
 };
 class VertexCenteredVectorGrid3 : public CollocatedVectorGrid3
 {
@@ -161,10 +153,6 @@ public:
 	}
 	void fill(const std::function<mVector3(const mVector3 &)> &func, Util::ExecutionPolicy policy) override
 	{
-	}
-	auto clone() -> std::shared_ptr<VectorGrid3> override
-	{
-		return {new VertexCenteredVectorGrid3(*this), [](VertexCenteredVectorGrid3 *obj) { delete obj; }};
 	}
 };
 class FaceCenteredVectorGrid3 : public VectorGrid3
@@ -186,7 +174,6 @@ public:
 
 	void fill(const mVector3 &value, Util::ExecutionPolicy policy) override {}
 	void fill(const std::function<mVector3(const mVector3 &)> &func, Util::ExecutionPolicy policy) override {}
-	auto clone() -> std::shared_ptr<VectorGrid3> override { return {new FaceCenteredVectorGrid3(*this), [](FaceCenteredVectorGrid3 *obj) { delete obj; }}; }
 
 public: // math
 	auto value_at_cell_center(size_t i, size_t j, size_t k) const -> mVector3;
