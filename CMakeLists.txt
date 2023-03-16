@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.24)
 project(HinaPE_Common VERSION 2.0.0 DESCRIPTION "HinaPE is not a Physics Engine" LANGUAGES CXX)
 
 option(HINAPE_DOUBLE "use double float precision" ON)
-option(HINAPE_UNIT_TEST "build unit test" ON)
+option(HINAPE_UNIT_TEST "build unit test" OFF)
 
 if (MSVC)
     add_compile_options(/wd4819 /wd4244)
@@ -63,3 +63,13 @@ if (APPLE AND CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     find_package(oneDPL REQUIRED)
     target_link_libraries(HinaPE_Common PUBLIC oneDPL)
 endif()
+
+# INSTALL TARGETS
+INSTALL(
+        TARGETS HinaPE_Common
+        CONFIGURATIONS Release
+        FILE_SET HEADERS
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+)
