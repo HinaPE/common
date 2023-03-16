@@ -13,6 +13,8 @@
 #include "math/time_integration.h"
 #include "geom/bbox.h"
 #include "geom/surface3.h"
+#include "geom/field.h"
+#include "geom/grid.h"
 #include "util/parallel.h"
 
 namespace HinaPE
