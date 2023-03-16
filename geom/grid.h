@@ -25,7 +25,7 @@ public:
 	{
 		mSize3 resolution;
 		mVector3 origin;
-		mVector3 grid_spacing = mVector3(1, 1, 1);
+		mVector3 grid_spacing;
 		mBBox3 bounding_box;
 	} _opt;
 };
@@ -96,14 +96,14 @@ private:
 	Math::LinearArray3Sampler<real, real> _linear_sampler;
 	std::function<real(const mVector3 &)> _sampler;
 };
-class CellCenteredScalarGrid3 final : public ScalarGrid3
+class CellCenteredScalarGrid3 : public ScalarGrid3
 {
 public:
 	inline auto data_size() const -> mSize3 final { return _opt.resolution; }
 	inline auto data_origin() const -> mVector3 final { return _opt.origin + Constant::Half * _opt.grid_spacing; }
 	auto clone() const -> std::shared_ptr<ScalarGrid3> final { new CellCenteredScalarGrid3(*this), [](CellCenteredScalarGrid3 *obj) { delete obj; }; }
 };
-class VertexCenteredScalarGrid3 final : public ScalarGrid3
+class VertexCenteredScalarGrid3 : public ScalarGrid3
 {
 public:
 	inline auto data_size() const -> mSize3 final { return _opt.resolution + mSize3(1, 1, 1); }
@@ -139,7 +139,7 @@ protected:
 private:
 	Math::Array3<mVector3> _data;
 };
-class CellCenteredVectorGrid3 final : public CollocatedVectorGrid3
+class CellCenteredVectorGrid3 : public CollocatedVectorGrid3
 {
 public:
 	void fill(const mVector3 &value, Util::ExecutionPolicy policy) override
@@ -153,7 +153,7 @@ public:
 		return {new CellCenteredVectorGrid3(*this), [](CellCenteredVectorGrid3 *obj) { delete obj; }};
 	}
 };
-class VertexCenteredVectorGrid3 final : public CollocatedVectorGrid3
+class VertexCenteredVectorGrid3 : public CollocatedVectorGrid3
 {
 public:
 	void fill(const mVector3 &value, Util::ExecutionPolicy policy) override
@@ -167,7 +167,7 @@ public:
 		return {new VertexCenteredVectorGrid3(*this), [](VertexCenteredVectorGrid3 *obj) { delete obj; }};
 	}
 };
-class FaceCenteredVectorGrid3 final : public VectorGrid3
+class FaceCenteredVectorGrid3 : public VectorGrid3
 {
 public:
 	inline auto u(size_t i, size_t j, size_t k) -> real & { return _u_data(i, j, k); }
@@ -187,6 +187,7 @@ public:
 	void fill(const mVector3 &value, Util::ExecutionPolicy policy) override {}
 	void fill(const std::function<mVector3(const mVector3 &)> &func, Util::ExecutionPolicy policy) override {}
 	auto clone() -> std::shared_ptr<VectorGrid3> override { return {new FaceCenteredVectorGrid3(*this), [](FaceCenteredVectorGrid3 *obj) { delete obj; }}; }
+
 public: // math
 	auto value_at_cell_center(size_t i, size_t j, size_t k) const -> mVector3;
 	auto divergence_at_cell_center(size_t i, size_t j, size_t k) const -> real;
