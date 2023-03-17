@@ -79,6 +79,9 @@ constexpr float HINA_PI = 3.1415926535897932384f;
 constexpr float HINA_INV_PI = 0.3183098861837906715f;
 
 template<typename T>
+inline auto similar(T x, T y) -> bool { return (std::abs(x - y) <= static_cast<T>(1e-2)); }
+
+template<typename T>
 inline auto similar(T x, T y, T eps) -> bool { return (std::abs(x - y) <= eps); }
 
 template<typename T>
