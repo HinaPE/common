@@ -81,7 +81,7 @@ class Sphere3 : public Surface3
 {
 public:
 	mVector3 _center;
-	real _radius = 1;
+	real _radius = 3;
 
 protected:
 	auto _closest_point_local(const mVector3 &other_point) const -> mVector3 final;
