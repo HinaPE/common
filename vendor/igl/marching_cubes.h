@@ -8,6 +8,10 @@
 #ifndef IGL_MARCHING_CUBES_H
 #define IGL_MARCHING_CUBES_H
 #include "igl_inline.h"
+#include "march_cube.h"
+
+#include <unordered_map>
+#include <iostream>
 
 #include <Eigen/Core>
 namespace igl
