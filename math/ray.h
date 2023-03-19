@@ -19,7 +19,7 @@ public:
 	Vector3<T> _origin;
 	Vector3<T> _direction;
 
-	Ray3(const Vector3<T> &origin, const Vector3<T> &direction) : _origin(origin), _direction(direction) {}
+	Ray3(const Vector3<T> &origin, const Vector3<T> &direction) : _origin(origin), _direction(direction.normalized()) {}
 };
 }
 
