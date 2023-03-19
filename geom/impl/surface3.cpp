@@ -175,6 +175,7 @@ auto HinaPE::Geom::Sphere3::_closest_intersection_local(const mRay3 &ray) const 
 			res.is_intersecting = true;
 			res.distance = t_min;
 			res.point = ray.point_at(t_min);
+			res.point_far = ray.point_at(t_max);
 			res.normal = (res.point - _center).normalized();
 		}
 	} else

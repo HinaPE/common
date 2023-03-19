@@ -16,6 +16,7 @@ struct SurfaceRayIntersection3
 	bool is_intersecting = false;
 	real distance = std::numeric_limits<real>::max();
 	mVector3 point;
+	mVector3 point_far;
 	mVector3 normal;
 	unsigned int ID = std::numeric_limits<unsigned int>::max();
 	unsigned int particleID = std::numeric_limits<unsigned int>::max(); // only for particle objects
