@@ -401,5 +401,15 @@ auto to_string(auto info) -> std::string
 {
 	return std::to_string(info);
 }
+
+auto load_str(const auto &path) -> std::string
+{
+	std::string src;
+	std::ifstream file(path);
+	std::stringstream ss;
+	ss << file.rdbuf();
+	src = ss.str();
+	return src;
+}
 } // namespace HinaPE::Math
 #endif //HINAPE_MATH_EXT_H
