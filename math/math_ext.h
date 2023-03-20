@@ -55,11 +55,11 @@ static constexpr real SqrtHalf     = static_cast<real>(0.7071067811865475244);
 static constexpr size_t ZeroSize   = 0;
 static constexpr size_t OneSize    = 1;
 static constexpr real I_REAL_MIN   = -std::numeric_limits<real>::max();
-static constexpr real I_REAL_MAX   = std::numeric_limits<real>::max();
+static constexpr real I_REAL_MAX   = +std::numeric_limits<real>::max();
 static constexpr int I_INT_MIN     = -std::numeric_limits<int>::max();
-static constexpr int I_INT_MAX     = std::numeric_limits<int>::max();
+static constexpr int I_INT_MAX     = +std::numeric_limits<int>::max();
 static constexpr size_t I_SIZE_MIN = -std::numeric_limits<size_t>::max();
-static constexpr size_t I_SIZE_MAX = std::numeric_limits<size_t>::max();
+static constexpr size_t I_SIZE_MAX = +std::numeric_limits<size_t>::max();
 }
 
 namespace HinaPE::Direction
@@ -400,16 +400,6 @@ auto random_real(auto l = 0, auto u = 1) -> auto
 auto to_string(auto info) -> std::string
 {
 	return std::to_string(info);
-}
-
-auto load_str(const auto &path) -> std::string
-{
-	std::string src;
-	std::ifstream file(path);
-	std::stringstream ss;
-	ss << file.rdbuf();
-	src = ss.str();
-	return src;
 }
 } // namespace HinaPE::Math
 #endif //HINAPE_MATH_EXT_H
