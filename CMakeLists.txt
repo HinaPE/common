@@ -45,13 +45,9 @@ if (TBB_FOUND)
     target_link_libraries(HinaPE_Common PUBLIC TBB::tbb)
 endif ()
 
-# optional dependency:
-find_package(OpenVDB CONFIG)
-if (OpenVDB_FOUND)
-    message(STATUS ">> OpenVDB found")
-    target_compile_definitions(HinaPE_Common PUBLIC HINAPE_OPENVDB)
-    target_link_libraries(HinaPE_Common PUBLIC OpenVDB::openvdb)
-endif ()
+# optional dependency: NanoVDB
+add_subdirectory(vendor/nanovdb)
+target_link_libraries(HinaPE_Common PUBLIC nanovdb)
 
 if (UNIX)
     find_package(OpenMP)
