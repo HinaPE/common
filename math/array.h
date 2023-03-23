@@ -28,6 +28,8 @@ public:
 	inline auto operator()(size_t i, size_t j, size_t k) -> T & { return _data[i + j * _size.x + k * _size.x * _size.y]; }
 	inline auto operator()(size_t i, size_t j, size_t k) const -> const T & { return _data[i + j * _size.x + k * _size.x * _size.y]; }
 	inline auto size() const -> const Size3 & { return _size; }
+	inline auto data() const -> const T * { return _data.data(); }
+	inline auto data() -> T * { return _data.data(); }
 
 public:
 	template<typename Callback>
