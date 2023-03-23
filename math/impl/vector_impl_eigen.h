@@ -33,7 +33,7 @@ template<typename T> auto Vector3<T>::max() const -> T 							{ return std::max(
 template<typename T> auto Vector3<T>::dot(const Vector3 &v_) const -> T 		{ return this->_v.dot(v_._v); }
 template<typename T> auto Vector3<T>::cross(const Vector3 &v_) const -> Vector3 { return Vector3(this->_v.cross(v_._v)); }
 template<typename T> auto Vector3<T>::length() const -> T 						{ return _v.norm(); }
-template<typename T> auto Vector3<T>::length_squared() const -> T 					{ return _v.squaredNorm(); }
+template<typename T> auto Vector3<T>::length_squared() const -> T 				{ return _v.squaredNorm(); }
 template<typename T> void Vector3<T>::normalize() 								{ _v.normalize(); }
 template<typename T> auto Vector3<T>::normalized() const -> Vector3 			{ return Vector3(_v.normalized()); }
 template<typename T> auto Vector3<T>::tangential() const -> std::tuple<Vector3, Vector3> { Vector3<T> a = ((std::fabs(y()) > 0 || std::fabs(z()) > 0) ? Vector3<T>(1, 0, 0): Vector3<T>(0, 1, 0)).cross(*this).normalized(); Vector3<T> b = cross(a); return std::make_tuple(a, b); }

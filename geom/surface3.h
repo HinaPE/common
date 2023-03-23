@@ -69,6 +69,7 @@ class Box3 : public Surface3
 public:
 	mBBox3 _bound;
 	mVector3 _extent;
+	explicit Box3(mVector3 extent = mVector3::One(), const mVector3& center = mVector3::Zero()) : _extent(std::move(extent)), _bound(center - extent / static_cast<real>(2), center + extent / static_cast<real>(2)) {}
 
 protected:
 	auto _closest_point_local(const mVector3 &other_point) const -> mVector3 final;
@@ -82,7 +83,8 @@ class Sphere3 : public Surface3
 {
 public:
 	mVector3 _center;
-	real _radius = 3;
+	real _radius = 1;
+	explicit Sphere3(real radius = 1, mVector3 center = mVector3::Zero()) : _radius(radius), _center(std::move(center)) {}
 
 protected:
 	auto _closest_point_local(const mVector3 &other_point) const -> mVector3 final;
