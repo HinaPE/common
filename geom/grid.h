@@ -5,214 +5,119 @@
 // MPL-2.0 license
 
 #include "field.h"
-#include "math/array.h"
+#include "bbox.h"
 #include "math/size.h"
-#include "geom/bbox.h"
+#include "math/array.h"
 
 namespace HinaPE::Geom
 {
-// ============================== Grid3 ==============================
-class Grid3
+template<typename T>
+struct ValuedGrid3
 {
-public:
-	using DataPositionFunc = std::function<mVector3(size_t, size_t, size_t)>;
-	auto cell_center_position() const -> DataPositionFunc;
-	void for_each_cell_index(const std::function<void(size_t, size_t, size_t)> &func) const { for (size_t k = 0; k < _opt.resolution.z; ++k) for (size_t j = 0; j < _opt.resolution.y; ++j) for (size_t i = 0; i < _opt.resolution.x; ++i) func(i, j, k); }
-	void parallel_for_each_cell_index(const std::function<void(size_t, size_t, size_t)> &func) const { Util::parallelFor((size_t) 0, _opt.resolution.x, (size_t) 0, _opt.resolution.y, (size_t) 0, _opt.resolution.z, [&func](size_t i, size_t j, size_t k) { func(i, j, k); }); }
+	Math::Array3<T> data_center;
+	Math::Array3<T> data_vertex;
+	Math::Array3<T> data_face_u;
+	Math::Array3<T> data_face_v;
+	Math::Array3<T> data_face_w;
 
-public:
-	struct Opt
+	mSize3 resolution;
+	mVector3 center;
+	mVector3 spacing;
+	mVector3 origin;
+
+	struct Cell
 	{
-		mSize3 resolution;
-		mVector3 origin;
-		mVector3 grid_spacing;
-		mBBox3 bounding_box;
-	} _opt;
+		// center data
+		T center;
+
+		// face data
+		T top;
+		T bottom;
+		T left;
+		T right;
+		T front;
+		T back;
+
+		// vertex data
+		T top_left_front;
+		T top_right_front;
+		T bottom_left_front;
+		T bottom_right_front;
+		T top_left_back;
+		T top_right_back;
+		T bottom_left_back;
+		T bottom_right_back;
+	};
+
+	ValuedGrid3();
+	~ValuedGrid3() = default;
+	auto cell(size_t x, size_t y, size_t z) const -> Cell;
+	void resize(const mSize3 &resolution, const mVector3 &spacing, const mVector3 &center = mVector3::Zero());
+	auto bbox() const -> mBBox3;
 };
-// ============================== Grid3 ==============================
 
-
-
-// ============================== ScalarGrid3 ==============================
-class ScalarGrid3 : public Grid3, public ScalarField3
+template<typename T>
+ValuedGrid3<T>::ValuedGrid3()
 {
-public:
-	void for_each_data_point_index(const std::function<void(size_t, size_t, size_t)> &func) const { _data.for_each_index(func); }
-	void parallel_for_each_data_point_index(const std::function<void(size_t, size_t, size_t)> &func) const { _data.parallel_for_each_index(func); }
-	void fill(real value, Util::ExecutionPolicy policy = Util::ExecutionPolicy::Parallel) { Util::parallelFor((size_t) 0, _data.size().x, (size_t) 0, _data.size().y, (size_t) 0, _data.size().z, [&](size_t i, size_t j, size_t k) { _data(i, j, k) = value; }, policy); }
-	void fill(const std::function<real(const mVector3 &)> &func, Util::ExecutionPolicy policy = Util::ExecutionPolicy::Parallel)
-	{
-		auto pos = data_position();
-		Util::parallelFor((size_t) 0, _data.size().x, (size_t) 0, _data.size().y, (size_t) 0, _data.size().z, [&](size_t i, size_t j, size_t k) { _data(i, j, k) = func(pos(i, j, k)); }, policy);
-	}
+	resize(mSize3::Ones(), mVector3::One());
+}
 
-public: // implement ScalarField3
-	inline auto sample(const mVector3 &x) const -> real final { return _sampler(x); }
-	inline auto sampler() const -> std::function<real(const mVector3 &)> final { return _sampler; }
-	inline auto gradient(const mVector3 &x) const -> mVector3 final
-	{
-		std::array<mVector3u, 8> indices{};
-		std::array<real, 8> weights{};
-		_linear_sampler.get_coordinate_and_weights(x, &indices, &weights);
-
-		mVector3 res = mVector3::Zero();
-		for (size_t i = 0; i < 8; ++i)
-			res += weights[i] * gradient_at_data_point(indices[i].x(), indices[i].y(), indices[i].z());
-
-		return res;
-	}
-	inline auto laplacian(const mVector3 &x) const -> real final
-	{
-		std::array<mVector3u, 8> indices{};
-		std::array<real, 8> weights{};
-		_linear_sampler.get_coordinate_and_weights(x, &indices, &weights);
-
-		real result = Constant::Zero;
-		for (size_t i = 0; i < 8; ++i)
-			result += weights[i] * laplacian_at_data_point(indices[i].x(), indices[i].y(), indices[i].z());
-
-		return result;
-	}
-
-public: // math
-	inline auto gradient_at_data_point(size_t i, size_t j, size_t k) const -> mVector3 { return gradient3(_data, _opt.grid_spacing, i, j, k); } // TODO: remove
-	inline auto laplacian_at_data_point(size_t i, size_t j, size_t k) const -> real { return laplacian3(_data, _opt.grid_spacing, i, j, k); } // TODO: remove
-
-	using DataPositionFunc = std::function<mVector3(size_t, size_t, size_t)>;
-	auto data_position() const -> DataPositionFunc { return [this](size_t i, size_t j, size_t k) -> mVector3 { return _opt.origin + _opt.grid_spacing * mVector3({i, j, k}); }; }
-	virtual inline auto data_size() const -> mSize3 = 0; /// not necessarily equal to _opt.resolution
-	virtual inline auto data_origin() const -> mVector3 = 0; /// not necessarily equal to _opt.origin
-	void resize(const mSize3 &resolution, const mVector3 &grid_spacing, const mVector3 &origin, real initial_value);
-	void clear() { resize(mSize3(0, 0, 0), _opt.grid_spacing, _opt.origin, Constant::Zero); }
-
-public: // constructors & destructor & assignment operators
-	ScalarGrid3() : _linear_sampler(_data) { _sampler = _linear_sampler.functor(); }
-	inline auto operator()(size_t i, size_t j, size_t k) -> real & { return _data(i, j, k); }
-	inline auto operator()(size_t i, size_t j, size_t k) const -> const real & { return _data(i, j, k); }
-
-private:
-	Math::Array3<real> _data;
-	Math::LinearArray3Sampler<real, real> _linear_sampler;
-	std::function<real(const mVector3 &)> _sampler;
-};
-class CellCenteredScalarGrid3 : public ScalarGrid3
+template<typename T>
+void ValuedGrid3<T>::resize(const mSize3 &r, const mVector3 &s, const mVector3 &c)
 {
-public:
-	inline auto data_size() const -> mSize3 final { return _opt.resolution; }
-	inline auto data_origin() const -> mVector3 final { return _opt.origin + Constant::Half * _opt.grid_spacing; }
-};
-class VertexCenteredScalarGrid3 : public ScalarGrid3
+	resolution = r;
+	spacing = s;
+	origin = {
+			center.x() - static_cast<real>(resolution.x) * spacing.x() / 2.0,
+			center.y() - static_cast<real>(resolution.y) * spacing.y() / 2.0,
+			center.z() - static_cast<real>(resolution.z) * spacing.z() / 2.0
+	};
+
+	data_center.resize(resolution, T());
+	data_vertex.resize(resolution + mSize3::Ones(), T());
+	data_face_u.resize(resolution + mSize3(1, 0, 0), T());
+	data_face_v.resize(resolution + mSize3(0, 1, 0), T());
+	data_face_w.resize(resolution + mSize3(0, 0, 1), T());
+}
+
+template<typename T>
+auto ValuedGrid3<T>::cell(size_t x, size_t y, size_t z) const -> ValuedGrid3::Cell
 {
-public:
-	inline auto data_size() const -> mSize3 final { return _opt.resolution + mSize3(1, 1, 1); }
-	inline auto data_origin() const -> mVector3 final { return _opt.origin; }
-};
-// ============================== ScalarGrid3 ==============================
+	// @formatter:off
+	Cell cell;
+	cell.center 			= data_center(x, y, z);
+	cell.top 				= data_face_v(x, y + 1, z);
+	cell.bottom 			= data_face_v(x, y, z);
+	cell.left 				= data_face_u(x, y, z);
+	cell.right 				= data_face_u(x + 1, y, z);
+	cell.front 				= data_face_w(x, y, z);
+	cell.back 				= data_face_w(x, y, z + 1);
+	cell.top_left_front 	= data_vertex(x, y + 1, z);
+	cell.top_right_front 	= data_vertex(x + 1, y + 1, z);
+	cell.bottom_left_front 	= data_vertex(x, y, z);
+	cell.bottom_right_front = data_vertex(x + 1, y, z);
+	cell.top_left_back 		= data_vertex(x, y + 1, z + 1);
+	cell.top_right_back 	= data_vertex(x + 1, y + 1, z + 1);
+	cell.bottom_left_back 	= data_vertex(x, y, z + 1);
+	cell.bottom_right_back 	= data_vertex(x + 1, y, z + 1);
+	return cell;
+	// @formatter:on
+}
 
-
-
-// ============================== VectorGrid3 ==============================
-class VectorGrid3 : public Grid3, public VectorField3
+template<typename T>
+auto ValuedGrid3<T>::bbox() const -> mBBox3
 {
-public:
-	virtual void fill(const mVector3 &value, Util::ExecutionPolicy policy) = 0;
-	virtual void fill(const std::function<mVector3(const mVector3 &)> &func, Util::ExecutionPolicy policy) = 0;
-public: // implement VectorField3
-	/* NOT IMPLEMENTED */ auto sample(const mVector3 &x) const -> mVector3 final { return mVector3::Zero(); }
-	/* NOT IMPLEMENTED */ auto sampler() const -> std::function<mVector3(const mVector3 &)> final { return [this](const mVector3 &x) { return sample(x); }; }
-	/* NOT IMPLEMENTED */ auto divergence(const mVector3 &x) const -> real final { return Constant::Zero; }
-	/* NOT IMPLEMENTED */ auto curl(const mVector3 &x) const -> mVector3 final { return mVector3::Zero(); }
-public:
-	void resize(const mSize3 &resolution, const mVector3 &grid_spacing, const mVector3 &origin, const mVector3 &initial_value);
-protected:
-	virtual void on_resize(const mSize3 &resolution, const mVector3 &grid_spacing, const mVector3 &origin, const mVector3 &initial_value) = 0;
-};
-class CollocatedVectorGrid3 : public VectorGrid3
-{
-protected:
-	void on_resize(const mSize3 &resolution, const mVector3 &grid_spacing, const mVector3 &origin, const mVector3 &initial_value) final;
+	mBBox3 bbox;
 
-private:
-	Math::Array3<mVector3> _data;
-};
-class CellCenteredVectorGrid3 : public CollocatedVectorGrid3
-{
-public:
-	void fill(const mVector3 &value, Util::ExecutionPolicy policy) override
-	{
-	}
-	void fill(const std::function<mVector3(const mVector3 &)> &func, Util::ExecutionPolicy policy) override
-	{
-	}
-};
-class VertexCenteredVectorGrid3 : public CollocatedVectorGrid3
-{
-public:
-	void fill(const mVector3 &value, Util::ExecutionPolicy policy) override
-	{
-	}
-	void fill(const std::function<mVector3(const mVector3 &)> &func, Util::ExecutionPolicy policy) override
-	{
-	}
-};
-class FaceCenteredVectorGrid3 : public VectorGrid3
-{
-public:
-	inline auto u(size_t i, size_t j, size_t k) -> real & { return _u_data(i, j, k); }
-	inline auto v(size_t i, size_t j, size_t k) -> real & { return _v_data(i, j, k); }
-	inline auto w(size_t i, size_t j, size_t k) -> real & { return _w_data(i, j, k); }
-	inline auto u(size_t i, size_t j, size_t k) const -> const real & { return _u_data(i, j, k); }
-	inline auto v(size_t i, size_t j, size_t k) const -> const real & { return _v_data(i, j, k); }
-	inline auto w(size_t i, size_t j, size_t k) const -> const real & { return _w_data(i, j, k); }
+	bbox._lower_corner = origin;
+	bbox._upper_corner = origin + mVector3(
+			static_cast<real>(resolution.x) * spacing.x(),
+			static_cast<real>(resolution.y) * spacing.y(),
+			static_cast<real>(resolution.z) * spacing.z()
+	);
 
-	void for_each_u_index(const std::function<void(size_t, size_t, size_t)> &func) const { _u_data.for_each_index(func); }
-	void for_each_v_index(const std::function<void(size_t, size_t, size_t)> &func) const { _v_data.for_each_index(func); }
-	void for_each_w_index(const std::function<void(size_t, size_t, size_t)> &func) const { _w_data.for_each_index(func); }
-	void parallel_for_each_u_index(const std::function<void(size_t, size_t, size_t)> &func) const { _u_data.parallel_for_each_index(func); }
-	void parallel_for_each_v_index(const std::function<void(size_t, size_t, size_t)> &func) const { _v_data.parallel_for_each_index(func); }
-	void parallel_for_each_w_index(const std::function<void(size_t, size_t, size_t)> &func) const { _w_data.parallel_for_each_index(func); }
-
-	void fill(const mVector3 &value, Util::ExecutionPolicy policy) override {}
-	void fill(const std::function<mVector3(const mVector3 &)> &func, Util::ExecutionPolicy policy) override {}
-
-public: // math
-	auto value_at_cell_center(size_t i, size_t j, size_t k) const -> mVector3;
-	auto divergence_at_cell_center(size_t i, size_t j, size_t k) const -> real;
-	auto curl_at_cell_center(size_t i, size_t j, size_t k) const -> mVector3;
-
-public:
-	explicit FaceCenteredVectorGrid3() : _u_sampler(_u_data), _v_sampler(_v_data), _w_sampler(_w_data) { _sampler = [&](const mVector3 &x) -> mVector3 { return {_u_sampler(x), _v_sampler(x), _w_sampler(x)}; }; }
-
-protected:
-	void on_resize(const mSize3 &resolution, const mVector3 &grid_spacing, const mVector3 &origin, const mVector3 &initial_value) final;
-
-private:
-	Math::Array3<real> _u_data;
-	Math::Array3<real> _v_data;
-	Math::Array3<real> _w_data;
-	mVector3 _u_origin;
-	mVector3 _v_origin;
-	mVector3 _w_origin;
-	Math::LinearArray3Sampler<real, real> _u_sampler;
-	Math::LinearArray3Sampler<real, real> _v_sampler;
-	Math::LinearArray3Sampler<real, real> _w_sampler;
-	std::function<mVector3(const mVector3 &)> _sampler;
-};
-// ============================== VectorGrid3 ==============================
-
-
-
-//@formatter:off
-using Grid3Ptr                     = std::shared_ptr<Grid3>;
-using ScalarGrid3Ptr               = std::shared_ptr<ScalarGrid3>;
-using CellCenteredScalarGrid3Ptr   = std::shared_ptr<CellCenteredScalarGrid3>;
-using VertexCenteredScalarGrid3Ptr = std::shared_ptr<VertexCenteredScalarGrid3>;
-using VectorGrid3Ptr               = std::shared_ptr<VectorGrid3>;
-using CollocatedVectorGrid3Ptr     = std::shared_ptr<CollocatedVectorGrid3>;
-using CellCenteredVectorGrid3Ptr   = std::shared_ptr<CellCenteredVectorGrid3>;
-using VertexCenteredVectorGrid3Ptr = std::shared_ptr<VertexCenteredVectorGrid3>;
-using FaceCenteredVectorGrid3Ptr   = std::shared_ptr<FaceCenteredVectorGrid3>;
-//@formatter:on
+	return bbox;
+}
 }
 
 #endif //HINAPE_GRID_H

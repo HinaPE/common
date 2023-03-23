@@ -24,8 +24,8 @@ public:
 	auto gradient(const mVector3 &x) const -> mVector3 final { return mVector3::Zero(); }
 	auto laplacian(const mVector3 &x) const -> real final { return Constant::Zero; }
 	auto sampler() const -> std::function<real(const mVector3 &)> final { return [this](const mVector3 &) { return _value; }; }
-public:
 	explicit ConstantScalarField3(real value) : _value(value) {}
+
 private:
 	real _value = Constant::Zero;
 };
@@ -37,15 +37,11 @@ public:
 	auto laplacian(const mVector3 &x) const -> real final { return _custom_laplacian_function(x); }
 	auto sampler() const -> std::function<real(const mVector3 &)> final { return _custom_function; }
 
-public:
-	struct Opt
-	{
-		real _resolution = static_cast<real>(1e-3);
-	};
 private:
 	std::function<real(const mVector3 &)> _custom_function;
 	std::function<mVector3(const mVector3 &)> _custom_gradient_function;
 	std::function<real(const mVector3 &)> _custom_laplacian_function;
+	real _resolution = 1e-3;
 };
 class VectorField3 : public Field3
 {
@@ -62,8 +58,8 @@ public:
 	auto divergence(const mVector3 &x) const -> real final { return Constant::Zero; }
 	auto curl(const mVector3 &x) const -> mVector3 final { return mVector3::Zero(); }
 	auto sampler() const -> std::function<mVector3(const mVector3 &)> final { return [this](const mVector3 &) -> mVector3 { return _value; }; }
-public:
 	explicit ConstantVectorField3(mVector3 value) : _value(std::move(value)) {}
+
 private:
 	mVector3 _value = mVector3::Zero();
 };
@@ -75,16 +71,11 @@ public:
 	auto divergence(const mVector3 &x) const -> real final { return _custom_divergence_function(x); }
 	auto curl(const mVector3 &x) const -> mVector3 final { return _custom_curl_function(x); }
 
-public:
-	struct Opt
-	{
-		real _resolution = 1e-3;
-	} _opt;
-
 private:
 	std::function<mVector3(const mVector3 &)> _custom_function;
 	std::function<real(const mVector3 &)> _custom_divergence_function;
 	std::function<mVector3(const mVector3 &)> _custom_curl_function;
+	real _resolution = 1e-3;
 };
 
 //@formatter:off

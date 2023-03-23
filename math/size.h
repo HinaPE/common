@@ -18,6 +18,9 @@ class Size3
 public:
 	size_t x, y, z;
 
+	static constexpr auto Zero() -> Size3 { return {}; }
+	static constexpr auto Ones() -> Size3 { return Size3(1, 1, 1); }
+
 public:
 	template<typename U>
 	Size3(const std::initializer_list<U> &lst);
