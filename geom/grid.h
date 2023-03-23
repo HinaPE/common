@@ -62,7 +62,8 @@ struct DataGrid3
 	void resize(const mSize3 &resolution, const mVector3 &spacing, const mVector3 &center = mVector3::Zero());
 	auto bbox() const -> mBBox3;
 
-	auto sample(const mVector3 &x, Data data = Data::Center) const -> real;
+	auto sample(const mVector3 &x, Data data = Data::Center) const -> T;
+	auto sample_uvw(const mVector3 &x) const -> mVector3;
 	auto cell(size_t x, size_t y, size_t z) const -> Cell;
 	auto pos_center(size_t x, size_t y, size_t z) const -> mVector3;
 	auto pos_vertex(size_t x, size_t y, size_t z) const -> mVector3;
@@ -111,7 +112,7 @@ auto DataGrid3<T>::bbox() const -> mBBox3
 }
 
 template<typename T>
-auto DataGrid3<T>::sample(const mVector3 &x, DataGrid3::Data data) const -> real
+auto DataGrid3<T>::sample(const mVector3 &x, DataGrid3::Data data) const -> T
 {
 	// linear interpolation
 	long i, j, k;
@@ -161,6 +162,16 @@ auto DataGrid3<T>::sample(const mVector3 &x, DataGrid3::Data data) const -> real
 			(*target)(i, jp1, kp1),
 			(*target)(ip1, jp1, kp1),
 			fx, fy, fz
+	);
+}
+
+template<typename T>
+auto DataGrid3<T>::sample_uvw(const mVector3 &x) const -> mVector3
+{
+	return mVector3(
+			sample(x, Data::FaceU),
+			sample(x, Data::FaceV),
+			sample(x, Data::FaceW)
 	);
 }
 
