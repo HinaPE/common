@@ -287,6 +287,9 @@ struct VectorGridField3 : public DataGrid3<mVector3>
 	auto divergence_at_data_point(size_t i, size_t j, size_t k, Data data = Data::Center) const -> real;
 	auto curl_at_data_point(size_t i, size_t j, size_t k, Data data = Data::Center) const -> mVector3;
 };
+
+using ScalarGridField3Ptr = std::shared_ptr<ScalarGridField3>;
+using VectorGridField3Ptr = std::shared_ptr<VectorGridField3>;
 }
 
 #endif //HINAPE_GRID_H
