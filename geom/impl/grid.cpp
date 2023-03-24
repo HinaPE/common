@@ -66,11 +66,9 @@ auto HinaPE::Geom::ScalarGridField3::gradient(const mVector3 &x, HinaPE::Geom::D
 	}
 
 	auto size = target->size();
-	auto res = generate_indices_and_weights(x, origin, spacing, size);
-	std::array<mSize3, 8> indices = std::get<0>(res);
-	std::array<real, 8> weights = std::get<1>(res);
+	auto [indices, weights] = generate_indices_and_weights(x, origin, spacing, size); // c++ 17
 
-	mVector3 result;
+	mVector3 result = mVector3::Zero();
 	for (size_t s = 0; s < 8; ++s)
 		result += weights[s] * gradient_at_data_point(indices[s].x, indices[s].y, indices[s].z, data);
 
@@ -99,11 +97,9 @@ auto HinaPE::Geom::ScalarGridField3::laplacian(const mVector3 &x, HinaPE::Geom::
 	}
 
 	auto size = target->size();
-	auto res = generate_indices_and_weights(x, origin, spacing, size);
-	std::array<mSize3, 8> indices = std::get<0>(res);
-	std::array<real, 8> weights = std::get<1>(res);
+	auto [indices, weights] = generate_indices_and_weights(x, origin, spacing, size);
 
-	real result;
+	real result = 0;
 	for (size_t s = 0; s < 8; ++s)
 		result += weights[s] * laplacian_at_data_point(indices[s].x, indices[s].y, indices[s].z, data);
 
@@ -217,9 +213,7 @@ auto HinaPE::Geom::VectorGridField3::divergence(const mVector3 &x, HinaPE::Geom:
 	}
 
 	auto size = target->size();
-	auto res = generate_indices_and_weights(x, origin, spacing, size);
-	std::array<mSize3, 8> indices = std::get<0>(res);
-	std::array<real, 8> weights = std::get<1>(res);
+	auto [indices, weights] = generate_indices_and_weights(x, origin, spacing, size);
 
 	real result = 0;
 	for (size_t s = 0; s < 8; ++s)
@@ -250,11 +244,9 @@ auto HinaPE::Geom::VectorGridField3::curl(const mVector3 &x, HinaPE::Geom::DataG
 	}
 
 	auto size = target->size();
-	auto res = generate_indices_and_weights(x, origin, spacing, size);
-	std::array<mSize3, 8> indices = std::get<0>(res);
-	std::array<real, 8> weights = std::get<1>(res);
+	auto [indices, weights] = generate_indices_and_weights(x, origin, spacing, size);
 
-	mVector3 result = {0, 0, 0};
+	mVector3 result = mVector3::Zero();
 	for (size_t s = 0; s < 8; ++s)
 		result += weights[s] * curl_at_data_point(indices[s].x, indices[s].y, indices[s].z, data);
 
@@ -342,8 +334,8 @@ auto HinaPE::Geom::VectorGridField3::curl_at_data_point(size_t i, size_t j, size
 	real Fz_yp = up.z();
 
 	return mVector3{
-		HinaPE::Constant::Half * (Fz_yp - Fz_ym) / spacing.y() - HinaPE::Constant::Half * (Fy_zp - Fy_zm) / spacing.z(),
-		HinaPE::Constant::Half * (Fx_zp - Fx_zm) / spacing.z() - HinaPE::Constant::Half * (Fz_xp - Fz_xm) / spacing.x(),
-		HinaPE::Constant::Half * (Fy_xp - Fy_xm) / spacing.x() - HinaPE::Constant::Half * (Fx_yp - Fx_ym) / spacing.y()
+			HinaPE::Constant::Half * (Fz_yp - Fz_ym) / spacing.y() - HinaPE::Constant::Half * (Fy_zp - Fy_zm) / spacing.z(),
+			HinaPE::Constant::Half * (Fx_zp - Fx_zm) / spacing.z() - HinaPE::Constant::Half * (Fz_xp - Fz_xm) / spacing.x(),
+			HinaPE::Constant::Half * (Fy_xp - Fy_xm) / spacing.x() - HinaPE::Constant::Half * (Fx_yp - Fx_ym) / spacing.y()
 	};
 }
