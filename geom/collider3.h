@@ -15,6 +15,7 @@ public:
 	void resolve_collision(real radius, real restitution, mVector3 *position, mVector3 *velocity) const;
 	void update(real current_time, real time_interval);
 	virtual auto velocity_at(const mVector3 &point) const -> mVector3 = 0;
+	virtual auto generate_surface() const -> std::vector<mVector3> { return {}; }
 
 public:
 	struct Opt
