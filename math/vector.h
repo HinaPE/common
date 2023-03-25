@@ -304,6 +304,7 @@ namespace HinaPE::Color
 {
 //@formatter:off
 static mVector3 MIKU      = mVector3(0.2227f, 0.7698f, 0.7307f);
+static mVector3 SAKURA	  = mVector3(0.3359f, 0.1289f, 0.2070f);
 static mVector3 RED       = mVector3(1.0f   , 0.0f   , 0.0f);
 static mVector3 GREEN     = mVector3(0.0f   , 1.0f   , 0.0f);
 static mVector3 BLUE      = mVector3(0.0f   , 0.0f   , 1.0f);
