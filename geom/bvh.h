@@ -29,6 +29,9 @@ public:
 	};
 
 private:
+	auto _build(size_t node_index, size_t *item_indices, size_t n_items, size_t current_depth) -> size_t;
+	auto _qsplit(size_t *item_indices, size_t num_items, real pivot, uint8_t axis) -> size_t;
+
 	// @formatter:off
 	mBBox3 				_bound;
 	std::vector<T> 		_items;
@@ -56,6 +59,66 @@ void BVH<T>::build(const std::vector<T> &items, const std::vector<mBBox3> &items
 
 	std::vector<size_t> item_indices(size);
 	std::iota(item_indices.begin(), item_indices.end(), 0);
+
+	_build(0, item_indices.data(), size, 0);
+}
+
+template<typename T>
+auto BVH<T>::_build(size_t node_index, size_t *item_indices, size_t n_items, size_t current_depth) -> size_t
+{
+	_nodes.push_back(Node());
+
+	if (n_items == 1)
+	{
+		_nodes[node_index].init_leaf(item_indices[0], _item_bounds[item_indices[0]]);
+		return current_depth + 1;
+	}
+
+	mBBox3 node_bound;
+	for (size_t i = 0; i < n_items; ++i)
+		node_bound.merge(_item_bounds[item_indices[i]]);
+
+	mVector3 d = node_bound._upper_corner - node_bound._lower_corner;
+
+	uint8_t axis = 0;
+	if (d.x() > d.y() && d.x() > d.z())
+		axis = 0;
+	else
+		axis = d.y() > d.z() ? 1 : 2;
+
+	real pivot = 0.5f * (node_bound._lower_corner[axis] + node_bound._upper_corner[axis]);
+
+	// classify primitives with respect to split
+	size_t mid_point = _qsplit(item_indices, n_items, pivot, axis);
+
+	// recursively initialize children _nodes
+	size_t d0 = _build(node_index + 1, item_indices, mid_point, current_depth + 1);
+	_nodes[node_index].init_internal(axis, _nodes.size(), node_bound);
+	size_t d1 = _build(_nodes[node_index].child, item_indices + mid_point, n_items - mid_point, current_depth + 1);
+
+	return std::max(d0, d1);
+}
+
+template<typename T>
+auto BVH<T>::_qsplit(size_t *item_indices, size_t num_items, real pivot, uint8_t axis) -> size_t
+{
+	real centroid;
+	size_t ret = 0;
+
+	for (int i = 0; i < num_items; ++i)
+	{
+		mBBox3 b = _item_bounds[item_indices[i]];
+		centroid = 0.5f * (b._lower_corner[axis] + b._upper_corner[axis]);
+		if (centroid < pivot)
+		{
+			std::swap(item_indices[i], item_indices[ret]);
+			++ret;
+		}
+	}
+	if (ret == 0 || ret == num_items)
+		ret = num_items >> 1;
+
+	return ret;
 }
 
 // @formatter:off
