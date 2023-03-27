@@ -29,6 +29,7 @@ using real = float;
 #include <sstream>
 #include <random>
 #include <thread>
+#include <numeric>
 
 //@formatter:off
 namespace HinaPE::Constant
