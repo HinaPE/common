@@ -30,6 +30,7 @@ public:
 	auto center() const -> mVector3;
 	void merge(const mVector3 &point);
 	void merge(const BoundingBox3 &bbox);
+	void expand(T delta);
 	void reset();
 
 public:
@@ -123,6 +124,16 @@ void BoundingBox3<T>::merge(const BoundingBox3 &bbox)
 	_upper_corner.x() = std::max(_upper_corner.x(), bbox._upper_corner.x());
 	_upper_corner.y() = std::max(_upper_corner.y(), bbox._upper_corner.y());
 	_upper_corner.z() = std::max(_upper_corner.z(), bbox._upper_corner.z());
+}
+template<typename T>
+void BoundingBox3<T>::expand(T delta)
+{
+	_lower_corner.x() -= delta;
+	_lower_corner.y() -= delta;
+	_lower_corner.z() -= delta;
+	_upper_corner.x() += delta;
+	_upper_corner.y() += delta;
+	_upper_corner.z() += delta;
 }
 template<typename T>
 void BoundingBox3<T>::reset()
