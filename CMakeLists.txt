@@ -4,10 +4,6 @@ project(HinaPE_Common VERSION 2.0.0 DESCRIPTION "HinaPE is not a Physics Engine"
 option(HINAPE_DOUBLE "use double float precision" ON)
 option(HINAPE_UNIT_TEST "build unit test" ON)
 
-if (MSVC)
-    add_compile_options(/wd4819 /wd4244)
-endif ()
-
 add_library(HinaPE_Common STATIC)
 file(GLOB_RECURSE headers common.h animation/*.h geom/*.h math/*.h util/*.h vendor/igl/*.h vendor/json/*.h vendor/nsearch/*.h vendor/cppoptlib/*.h)
 file(GLOB_RECURSE sources animation/*.cpp geom/*.cpp math/*.cpp util/*.cpp vendor/igl/*.cpp vendor/json/*.cpp vendor/nsearch/*.cpp vendor/cppoptlib/*.cpp)
@@ -26,6 +22,9 @@ target_include_directories(HinaPE_Common PUBLIC . vendor vendor/eigen3)
 target_compile_definitions(HinaPE_Common PUBLIC HINAPE_DEBUG HINA_EIGEN)
 if (HINAPE_DOUBLE)
     target_compile_definitions(HinaPE_Common PUBLIC HINAPE_DOUBLE USE_DOUBLE)
+endif ()
+if (MSVC)
+    target_compile_options(HinaPE_Common PUBLIC /wd4819 /wd4244)
 endif ()
 
 # builtin dependency: google test
