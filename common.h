@@ -14,6 +14,7 @@
 #include "geom/bbox.h"
 #include "geom/surface3.h"
 #include "geom/grid.h"
+#include "geom/triangle_mesh.h"
 #include "util/parallel.h"
 
 namespace HinaPE
