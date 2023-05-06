@@ -5,8 +5,8 @@ option(HINAPE_DOUBLE "use double float precision" ON)
 option(HINAPE_UNIT_TEST "build unit test" ON)
 
 add_library(HinaPE_Common STATIC)
-file(GLOB_RECURSE headers common.h animation/*.h geom/*.h math/*.h util/*.h vendor/igl/*.h vendor/json/*.h vendor/nsearch/*.h vendor/cppoptlib/*.h)
-file(GLOB_RECURSE sources animation/*.cpp geom/*.cpp math/*.cpp util/*.cpp vendor/igl/*.cpp vendor/json/*.cpp vendor/nsearch/*.cpp vendor/cppoptlib/*.cpp)
+file(GLOB_RECURSE headers common.h animation/*.h geom/*.h math/*.h util/*.h vendor/json/*.h vendor/nsearch/*.h vendor/cppoptlib/*.h)
+file(GLOB_RECURSE sources animation/*.cpp geom/*.cpp math/*.cpp util/*.cpp vendor/json/*.cpp vendor/nsearch/*.cpp vendor/cppoptlib/*.cpp)
 target_sources(HinaPE_Common
         PRIVATE
         ${sources}
@@ -26,6 +26,10 @@ endif ()
 if (MSVC)
     target_compile_options(HinaPE_Common PUBLIC /wd4819 /wd4244)
 endif ()
+
+# builtin dependency: libigl
+add_subdirectory(vendor/igl)
+#target_link_libraries(HinaPE_Common PUBLIC igl)
 
 # builtin dependency: google test
 if (HINAPE_UNIT_TEST)
