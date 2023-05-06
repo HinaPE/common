@@ -2,6 +2,7 @@
 #define HINAPE_TRIANGLE_MESH_H
 
 #include "surface3.h"
+#include "grid.h"
 #include "bvh.h"
 
 namespace HinaPE::Geom
@@ -25,6 +26,16 @@ private:
 	std::vector<unsigned int> indices;
 	std::vector<unsigned int> normal_indices;
 	std::vector<unsigned int> uv_indices;
+};
+
+class ImplicitTriangleMeshSurface : public ImplicitSurface3
+{
+public:
+
+
+private:
+	std::shared_ptr<TriangleMeshSurface> _mesh;
+	std::vector<VectorGridField3> _grid;
 };
 } // namespace HinaPE::Geom
 
