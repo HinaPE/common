@@ -29,7 +29,7 @@ endif ()
 
 # builtin dependency: libigl
 add_subdirectory(vendor/igl)
-#target_link_libraries(HinaPE_Common PUBLIC igl)
+target_link_libraries(HinaPE_Common PUBLIC igl_core)
 
 # builtin dependency: google test
 if (HINAPE_UNIT_TEST)
