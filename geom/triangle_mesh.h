@@ -20,6 +20,9 @@ protected:
 	auto _bounding_box_local() const -> mBBox3 final;
 
 private:
+	void buildBVH() const;
+
+private:
 	std::vector<mVector3> vertices;
 	std::vector<mVector3> normals;
 	std::vector<mVector2> uvs;
@@ -36,6 +39,26 @@ public:
 private:
 	std::shared_ptr<TriangleMeshSurface> _mesh;
 	std::vector<VectorGridField3> _grid;
+};
+
+class Triangle final : public Surface3
+{
+public:
+	auto get_barycentric_coords(const mVector3 &pt) const -> std::tuple<real, real, real>;
+	auto area() const -> real;
+	auto face_normal() const -> mVector3;
+
+protected:
+	auto _closest_point_local(const mVector3 &other_point) const -> mVector3 final;
+	auto _closest_intersection_local(const mRay3 &ray) const -> SurfaceRayIntersection3 final;
+	auto _closest_normal_local(const mVector3 &other_point) const -> mVector3 final;
+	auto _intersects_local(const mRay3 &ray) const -> bool final;
+	auto _bounding_box_local() const -> mBBox3 final;
+
+private:
+	std::array<mVector3, 3> _points;
+	std::array<mVector3, 3> _normals;
+	std::array<mVector2, 3> _uvs;
 };
 } // namespace HinaPE::Geom
 
