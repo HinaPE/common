@@ -5,6 +5,7 @@
 // MPL-2.0 license
 
 #include "math/vector.h"
+#include "math/ray.h"
 
 namespace HinaPE::Geom
 {
@@ -25,30 +26,32 @@ public:
 	auto depth() const -> T;
 	auto length(size_t axis) -> T;
 	auto overlaps(const BoundingBox3 &other) const -> bool;
-	auto contains(const mVector3 &point) const -> bool;
-	auto corner(size_t idx) const -> mVector3;
-	auto center() const -> mVector3;
-	void merge(const mVector3 &point);
+	auto contains(const Math::Vector3<T> &point) const -> bool;
+	auto corner(size_t idx) const -> Math::Vector3<T>;
+	auto center() const -> Math::Vector3<T>;
+	void merge(const Math::Vector3<T> &point);
 	void merge(const BoundingBox3 &bbox);
 	void expand(T delta);
 	void reset();
+	auto clamp(const Math::Vector3<T> &point) const -> Math::Vector3<T>;
+	auto intersects(const Math::Ray3<T> &ray) const -> bool;
 
 public:
 	constexpr BoundingBox3();
-	constexpr BoundingBox3(const mVector3 &point1, const mVector3 &point2);
+	constexpr BoundingBox3(const Math::Vector3<T> &point1, const Math::Vector3<T> &point2);
 	constexpr BoundingBox3(const BoundingBox3 &bbox) = default;
 	constexpr BoundingBox3(BoundingBox3 &&bbox) noexcept = default;
 	auto operator=(const BoundingBox3 &bbox) -> BoundingBox3 & = default;
 	auto operator=(BoundingBox3 &&bbox) noexcept -> BoundingBox3 & = default;
 
 public:
-	mVector3 _lower_corner, _upper_corner;
+	Math::Vector3<T> _lower_corner, _upper_corner;
 };
 
 template<typename T>
 constexpr BoundingBox3<T>::BoundingBox3() : _lower_corner(0), _upper_corner(0) {}
 template<typename T>
-constexpr BoundingBox3<T>::BoundingBox3(const mVector3 &point1, const mVector3 &point2)
+constexpr BoundingBox3<T>::BoundingBox3(const Math::Vector3<T> &point1, const Math::Vector3<T> &point2)
 {
 	_lower_corner.x() = std::min(point1.x(), point2.x());
 	_lower_corner.y() = std::min(point1.y(), point2.y());
@@ -79,7 +82,7 @@ auto BoundingBox3<T>::overlaps(const BoundingBox3 &other) const -> bool
 	return true;
 }
 template<typename T>
-auto BoundingBox3<T>::contains(const mVector3 &point) const -> bool
+auto BoundingBox3<T>::contains(const Math::Vector3<T> &point) const -> bool
 {
 	if (_lower_corner.x() > point.x() || _upper_corner.x() < point.x()) return false;
 	if (_lower_corner.y() > point.y() || _upper_corner.y() < point.y()) return false;
@@ -87,26 +90,26 @@ auto BoundingBox3<T>::contains(const mVector3 &point) const -> bool
 	return true;
 }
 template<typename T>
-auto BoundingBox3<T>::corner(size_t idx) const -> mVector3
+auto BoundingBox3<T>::corner(size_t idx) const -> Math::Vector3<T>
 {
 	static const T h = static_cast<T>(1) / 2;
-	static const std::array<mVector3, 8> offset = {
-			mVector3(-h, -h, -h),
-			mVector3(+h, -h, -h),
-			mVector3(-h, +h, -h),
-			mVector3(+h, +h, -h),
-			mVector3(-h, -h, +h),
-			mVector3(+h, -h, +h),
-			mVector3(-h, +h, +h),
-			mVector3(+h, +h, +h)
+	static const std::array<Math::Vector3<T>, 8> offset = {
+			Math::Vector3<T>(-h, -h, -h),
+			Math::Vector3<T>(+h, -h, -h),
+			Math::Vector3<T>(-h, +h, -h),
+			Math::Vector3<T>(+h, +h, -h),
+			Math::Vector3<T>(-h, -h, +h),
+			Math::Vector3<T>(+h, -h, +h),
+			Math::Vector3<T>(-h, +h, +h),
+			Math::Vector3<T>(+h, +h, +h)
 	};
 
-	return mVector3(width(), height(), depth()) * offset[idx] + center();
+	return Math::Vector3<T>(width(), height(), depth()) * offset[idx] + center();
 }
 template<typename T>
-auto BoundingBox3<T>::center() const -> mVector3 { return (_lower_corner + _upper_corner) / static_cast<T>(2); }
+auto BoundingBox3<T>::center() const -> Math::Vector3<T> { return (_lower_corner + _upper_corner) / static_cast<T>(2); }
 template<typename T>
-void BoundingBox3<T>::merge(const mVector3 &point)
+void BoundingBox3<T>::merge(const Math::Vector3<T> &point)
 {
 	_lower_corner.x() = std::min(_lower_corner.x(), point.x());
 	_lower_corner.y() = std::min(_lower_corner.y(), point.y());
@@ -144,6 +147,35 @@ void BoundingBox3<T>::reset()
 	_upper_corner.x() = -std::numeric_limits<T>::max();
 	_upper_corner.y() = -std::numeric_limits<T>::max();
 	_upper_corner.z() = -std::numeric_limits<T>::max();
+}
+template<typename T>
+auto BoundingBox3<T>::clamp(const Math::Vector3<T> &point) const -> Math::Vector3<T>
+{
+	return {
+			std::clamp(point.x(), _lower_corner.x(), _upper_corner.x()),
+			std::clamp(point.y(), _lower_corner.y(), _upper_corner.y()),
+			std::clamp(point.z(), _lower_corner.z(), _upper_corner.z())
+	};
+}
+template<typename T>
+auto BoundingBox3<T>::intersects(const Math::Ray3<T> &ray) const -> bool
+{
+	T min = 0, max = std::numeric_limits<T>::max();
+	const Math::Vector3<T>& ray_inv_dir = ray._direction.reciprocal();
+
+	for (size_t i = 0; i < 3; ++i)
+	{
+		T t_near = (_lower_corner[i] - ray._origin[i]) * ray_inv_dir[i];
+		T t_far = (_upper_corner[i] - ray._origin[i]) * ray_inv_dir[i];
+
+		if (t_near > t_far) std::swap(t_near, t_far);
+		min = std::max(min, t_near);
+		max = std::min(max, t_far);
+
+		if (min > max) return false;
+	}
+
+	return true;
 }
 }
 

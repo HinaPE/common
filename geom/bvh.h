@@ -78,12 +78,62 @@ void BVH<T>::build(const std::vector<T> &items, const std::vector<mBBox3> &items
 template<typename T>
 auto BVH<T>::intersects(const mBBox3 &box, const Util::BoxIntersectionTestFunc3<T> &testFunc) const -> bool
 {
+	if (!_bound.overlaps(box))
+		return false;
+
+	// prepare to traverse BVH for box
+	static constexpr size_t MAX_TREE_DEPTH = 8 * sizeof(size_t);
+	std::array<const Node *, MAX_TREE_DEPTH> todo;
+	size_t todo_pos = 0;
+
+	// traverse BVH nodes for box
+	const Node *node = _nodes.data();
+
+	while (node != nullptr)
+	{
+		if (node->is_leaf())
+		{
+			if (testFunc(_items[node->item], box))
+				return true;
+
+			// grab next node to process from todo stack
+			if (todo_pos > 0)
+			{
+				node = todo[--todo_pos];
+			} else
+				break;
+		} else
+		{
+			const Node *left = node + 1;
+			const Node *right = &_nodes[node->child];
+
+			// advance to next child node, possibly enqueue other child
+			if (!left->bound.overlaps(box))
+			{
+				node = right;
+			} else if (!right->bound.overlaps(box))
+			{
+				node = left;
+			} else
+			{
+				// enqueue right child and continue with left
+				todo[todo_pos++] = right;
+				node = left;
+			}
+		}
+	}
+
 	return false;
 }
 
 template<typename T>
 auto BVH<T>::intersects(const mRay3 &ray, const Util::RayIntersectionTestFunc3<T> &testFunc) const -> bool
 {
+	if (!_bound.intersects(ray))
+		return false;
+
+	// prepare to traverse BVH for ray
+
 	return false;
 }
 
@@ -123,7 +173,7 @@ Util::NearestNeighborQueryResult3<T> BVH<T>::nearest(const mVector3 &pt, const U
 			if (dist < best.distance)
 			{
 				best.distance = dist;
-				best.item = _items[node->item];
+				best.item = &_items[node->item];
 			}
 
 			// Grab next node to process from todo stack
