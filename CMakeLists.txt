@@ -51,7 +51,11 @@ endif ()
 # optional dependency: VDB
 #add_subdirectory(vendor/nanovdb)
 #target_link_libraries(HinaPE_Common PUBLIC nanovdb)
-find_package(OpenVDB CONFIG)
+
+if (APPLE)
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /usr/local/lib/cmake/OpenVDB)
+endif ()
+find_package(OpenVDB)
 if (OpenVDB_FOUND)
     message(STATUS ">> OpenVDB found")
     target_compile_definitions(HinaPE_Common PUBLIC HINAPE_OPENVDB)
