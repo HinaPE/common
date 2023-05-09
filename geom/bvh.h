@@ -109,12 +109,10 @@ auto BVH<T>::intersects(const mBBox3 &box, const Util::BoxIntersectionTestFunc3<
 
 			// advance to next child node, possibly enqueue other child
 			if (!left->bound.overlaps(box))
-			{
 				node = right;
-			} else if (!right->bound.overlaps(box))
-			{
+			else if (!right->bound.overlaps(box))
 				node = left;
-			} else
+			else
 			{
 				// enqueue right child and continue with left
 				todo[todo_pos++] = right;
@@ -133,6 +131,54 @@ auto BVH<T>::intersects(const mRay3 &ray, const Util::RayIntersectionTestFunc3<T
 		return false;
 
 	// prepare to traverse BVH for ray
+	static constexpr size_t MAX_TREE_DEPTH = 8 * sizeof(size_t);
+	std::array<const Node *, MAX_TREE_DEPTH> todo;
+	size_t todo_pos = 0;
+
+	// traverse BVH nodes for ray
+	const Node *node = _nodes.data();
+
+	while (node != nullptr)
+	{
+		if (node->is_leaf())
+		{
+			if (testFunc(_items[node->item], ray))
+				return true;
+
+			// grab next node to process from todo stack
+			if (todo_pos > 0)
+			{
+				node = todo[--todo_pos];
+			} else
+				break;
+		} else
+		{
+			const Node *left;
+			const Node *right;
+
+			if (ray._direction[node->flags] > 0.0)
+			{
+				left = node + 1;
+				right = (Node *) &_nodes[node->child];
+			} else
+			{
+				left = (Node *) &_nodes[node->child];
+				right = node + 1;
+			}
+
+			// advance to next child node, possibly enqueue other child
+			if (!left->bound.intersects(ray))
+				node = right;
+			else if (!right->bound.intersects(ray))
+				node = left;
+			else
+			{
+				// enqueue secondChild in todo stack
+				todo[todo_pos++] = right;
+				node = left;
+			}
+		}
+	}
 
 	return false;
 }
@@ -140,17 +186,169 @@ auto BVH<T>::intersects(const mRay3 &ray, const Util::RayIntersectionTestFunc3<T
 template<typename T>
 void BVH<T>::forEachIntersectingItem(const mBBox3 &box, const Util::BoxIntersectionTestFunc3<T> &testFunc, const Util::IntersectionVisitorFunc3<T> &visitorFunc) const
 {
+	if (!_bound.overlaps(box))
+		return;
+
+	// prepare to traverse BVH for box
+	static constexpr size_t MAX_TREE_DEPTH = 8 * sizeof(size_t);
+	std::array<const Node *, MAX_TREE_DEPTH> todo;
+	size_t todo_pos = 0;
+
+	// traverse BVH nodes for box
+	const Node *node = _nodes.data();
+
+	while (node != nullptr)
+	{
+		if (node->is_leaf())
+		{
+			if (testFunc(_items[node->item], box))
+				visitorFunc(_items[node->item]);
+
+			// grab next node to process from todo stack
+			if (todo_pos > 0)
+			{
+				node = todo[--todo_pos];
+			} else
+				break;
+		} else
+		{
+			const Node *left = node + 1;
+			const Node *right = &_nodes[node->child];
+
+			// advance to next child node, possibly enqueue other child
+			if (!left->bound.overlaps(box))
+				node = right;
+			else if (!right->bound.overlaps(box))
+				node = left;
+			else
+			{
+				// enqueue right child and continue with left
+				todo[todo_pos++] = right;
+				node = left;
+			}
+		}
+	}
 }
 
 template<typename T>
 void BVH<T>::forEachIntersectingItem(const mRay3 &ray, const Util::RayIntersectionTestFunc3<T> &testFunc, const Util::IntersectionVisitorFunc3<T> &visitorFunc) const
 {
+	if (!_bound.intersects(ray))
+		return;
+
+	// prepare to traverse BVH for ray
+	static constexpr size_t MAX_TREE_DEPTH = 8 * sizeof(size_t);
+	std::array<const Node *, MAX_TREE_DEPTH> todo;
+	size_t todo_pos = 0;
+
+	// traverse BVH nodes for ray
+	const Node *node = _nodes.data();
+
+	while (node != nullptr)
+	{
+		if (node->is_leaf())
+		{
+			if (testFunc(_items[node->item], ray))
+				visitorFunc(_items[node->item]);
+
+			// grab next node to process from todo stack
+			if (todo_pos > 0)
+			{
+				node = todo[--todo_pos];
+			} else
+				break;
+		} else
+		{
+			const Node *left;
+			const Node *right;
+
+			if (ray._direction[node->flags] > 0.0)
+			{
+				left = node + 1;
+				right = (Node *) &_nodes[node->child];
+			} else
+			{
+				left = (Node *) &_nodes[node->child];
+				right = node + 1;
+			}
+
+			// advance to next child node, possibly enqueue other child
+			if (!left->bound.intersects(ray))
+				node = right;
+			else if (!right->bound.intersects(ray))
+				node = left;
+			else
+			{
+				// enqueue secondChild in todo stack
+				todo[todo_pos++] = right;
+				node = left;
+			}
+		}
+	}
 }
 
 template<typename T>
 auto BVH<T>::closestIntersection(const mRay3 &ray, const Util::GetRayIntersectionFunc3<T> &testFunc) const -> Util::ClosestIntersectionQueryResult3<T>
 {
-	return Util::ClosestIntersectionQueryResult3<T>();
+	Util::ClosestIntersectionQueryResult3<T> best;
+
+	if (!_bound.intersects(ray))
+		return best;
+
+	// prepare to traverse BVH for ray
+	static constexpr size_t MAX_TREE_DEPTH = 8 * sizeof(size_t);
+	std::array<const Node *, MAX_TREE_DEPTH> todo;
+	size_t todo_pos = 0;
+
+	// traverse BVH nodes for ray
+	const Node *node = _nodes.data();
+
+	while (node != nullptr)
+	{
+		if (node->is_leaf())
+		{
+			real dist = testFunc(_items[node->item], ray);
+			if (dist < best.distance)
+			{
+				best.distance = dist;
+				best.item = &_items[node->item];
+			}
+
+			// grab next node to process from todo stack
+			if (todo_pos > 0)
+			{
+				node = todo[--todo_pos];
+			} else
+				break;
+		} else {
+			// get node children pointers for ray
+			const Node *left;
+			const Node *right;
+			if (ray._direction[node->flags] > 0.0)
+			{
+				left = node + 1;
+				right = (Node *) &_nodes[node->child];
+			} else
+			{
+				left = (Node *) &_nodes[node->child];
+				right = node + 1;
+			}
+
+			// advance to next child node, possibly enqueue other child
+			if (!left->bound.intersects(ray))
+				node = right;
+			else if (!right->bound.intersects(ray))
+				node = left;
+			else
+			{
+				// enqueue secondChild in todo stack
+				todo[todo_pos++] = right;
+				node = left;
+			}
+		}
+	}
+
+	return best;
 }
 
 template<typename T>
