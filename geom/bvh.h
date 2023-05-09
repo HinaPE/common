@@ -106,7 +106,92 @@ auto BVH<T>::closestIntersection(const mRay3 &ray, const Util::GetRayIntersectio
 template<typename T>
 Util::NearestNeighborQueryResult3<T> BVH<T>::nearest(const mVector3 &pt, const Util::NearestNeighborDistanceFunc3<T> &distanceFunc) const
 {
-	return Util::NearestNeighborQueryResult3<T>();
+	Util::NearestNeighborQueryResult3<T> best;
+
+	// Prepare to traverse BVH
+	static constexpr int MAX_TREE_DEPTH = 8 * sizeof(size_t);
+	std::array<const Node *, MAX_TREE_DEPTH> todo;
+	size_t todo_pos = 0;
+
+	// Traverse BVH nodes
+	const Node *node = _nodes.data();
+	while (node != nullptr)
+	{
+		if (node->is_leaf())
+		{
+			real dist = distanceFunc(_items[node->item], pt);
+			if (dist < best.distance)
+			{
+				best.distance = dist;
+				best.item = _items[node->item];
+			}
+
+			// Grab next node to process from todo stack
+			if (todo_pos > 0)
+			{
+				// Dequeue
+				--todo_pos;
+				node = todo[todo_pos];
+			} else
+				break;
+		} else
+		{
+			const real best_dist_sqr = best.distance * best.distance;
+
+			const Node *left = node + 1;
+			const Node *right = &_nodes[node->child];
+
+			// If pt is inside the box, then the closestLeft and Right will be
+			// identical to pt. This will make distMinLeftSqr and
+			// distMinRightSqr zero, meaning that such a box will have higher
+			// priority.
+			mVector3 closest_left = left->bound.clamp(pt);
+			mVector3 closest_right = right->bound.clamp(pt);
+
+			real dist_min_left_sqr = (closest_left - pt).length_squared();
+			real dist_min_right_sqr = (closest_right - pt).length_squared();
+
+			bool should_visit_left = dist_min_left_sqr < best_dist_sqr;
+			bool should_visit_right = dist_min_right_sqr < best_dist_sqr;
+
+			const Node *first_child;
+			const Node *second_child;
+			if (should_visit_left && should_visit_right)
+			{
+				if (dist_min_left_sqr < dist_min_right_sqr)
+				{
+					first_child = left;
+					second_child = right;
+				} else
+				{
+					first_child = right;
+					second_child = left;
+				}
+
+				// Enqueue second_child in todo stack
+				todo[todo_pos] = second_child;
+				++todo_pos;
+				node = first_child;
+			} else if (should_visit_left)
+			{
+				node = left;
+			} else if (should_visit_right)
+			{
+				node = right;
+			} else
+			{
+				if (todo_pos > 0)
+				{
+					// Dequeue
+					--todo_pos;
+					node = todo[todo_pos];
+				} else
+					break;
+			}
+		}
+	}
+
+	return best;
 }
 
 template<typename T>
