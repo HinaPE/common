@@ -2,14 +2,26 @@
 #define HINAPE_BVH_H
 
 #include "bbox.h"
+#include "util/intersection_query_engine.h"
+#include "util/nearest_neighbor_query_engine.h"
 
 namespace HinaPE::Geom
 {
 template<typename T>
-class BVH
+class BVH final : public Util::IntersectionQueryEngine3<T>, public Util::NearestNeighborQueryEngine3<T>
 {
 public:
 	void build(const std::vector<T> &items, const std::vector<mBBox3> &items_bounds);
+
+public:
+	auto intersects(const mBBox3 &box, const Util::BoxIntersectionTestFunc3<T> &testFunc) const -> bool final;
+	auto intersects(const mRay3 &ray, const Util::RayIntersectionTestFunc3<T> &testFunc) const -> bool final;
+	void forEachIntersectingItem(const mBBox3 &box, const Util::BoxIntersectionTestFunc3<T> &testFunc, const Util::IntersectionVisitorFunc3<T> &visitorFunc) const final;
+	void forEachIntersectingItem(const mRay3 &ray, const Util::RayIntersectionTestFunc3<T> &testFunc, const Util::IntersectionVisitorFunc3<T> &visitorFunc) const final;
+	auto closestIntersection(const mRay3 &ray, const Util::GetRayIntersectionFunc3<T> &testFunc) const -> Util::ClosestIntersectionQueryResult3<T> final;
+
+public:
+	auto nearest(const mVector3 &pt, const Util::NearestNeighborDistanceFunc3<T> &distanceFunc) const -> Util::NearestNeighborQueryResult3<T> final;
 
 public:
 	struct Node
@@ -61,6 +73,40 @@ void BVH<T>::build(const std::vector<T> &items, const std::vector<mBBox3> &items
 	std::iota(item_indices.begin(), item_indices.end(), 0);
 
 	_build(0, item_indices.data(), size, 0);
+}
+
+template<typename T>
+auto BVH<T>::intersects(const mBBox3 &box, const Util::BoxIntersectionTestFunc3<T> &testFunc) const -> bool
+{
+	return false;
+}
+
+template<typename T>
+auto BVH<T>::intersects(const mRay3 &ray, const Util::RayIntersectionTestFunc3<T> &testFunc) const -> bool
+{
+	return false;
+}
+
+template<typename T>
+void BVH<T>::forEachIntersectingItem(const mBBox3 &box, const Util::BoxIntersectionTestFunc3<T> &testFunc, const Util::IntersectionVisitorFunc3<T> &visitorFunc) const
+{
+}
+
+template<typename T>
+void BVH<T>::forEachIntersectingItem(const mRay3 &ray, const Util::RayIntersectionTestFunc3<T> &testFunc, const Util::IntersectionVisitorFunc3<T> &visitorFunc) const
+{
+}
+
+template<typename T>
+auto BVH<T>::closestIntersection(const mRay3 &ray, const Util::GetRayIntersectionFunc3<T> &testFunc) const -> Util::ClosestIntersectionQueryResult3<T>
+{
+	return Util::ClosestIntersectionQueryResult3<T>();
+}
+
+template<typename T>
+Util::NearestNeighborQueryResult3<T> BVH<T>::nearest(const mVector3 &pt, const Util::NearestNeighborDistanceFunc3<T> &distanceFunc) const
+{
+	return Util::NearestNeighborQueryResult3<T>();
 }
 
 template<typename T>

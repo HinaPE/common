@@ -7,10 +7,13 @@
 
 namespace HinaPE::Geom
 {
+class Triangle;
 class TriangleMeshSurface : public Surface3
 {
 public:
 	TriangleMeshSurface(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices);
+	auto triangle(size_t i) const -> Triangle;
+	inline auto number_of_triangles() -> size_t{return _indices.size() / 3;}
 
 protected:
 	auto _closest_point_local(const mVector3 &other_point) const -> mVector3 final;
@@ -23,12 +26,15 @@ private:
 	void buildBVH() const;
 
 private:
-	std::vector<mVector3> vertices;
-	std::vector<mVector3> normals;
-	std::vector<mVector2> uvs;
-	std::vector<unsigned int> indices;
-	std::vector<unsigned int> normal_indices;
-	std::vector<unsigned int> uv_indices;
+	std::vector<mVector3> _vertices;
+	std::vector<mVector3> _normals;
+	std::vector<mVector2> _uvs;
+	std::vector<unsigned int> _indices;
+	std::vector<unsigned int> _normal_indices;
+	std::vector<unsigned int> _uv_indices;
+
+	mutable BVH<size_t> _bvh;
+	mutable bool _bvh_dirty = true;
 };
 
 class ImplicitTriangleMeshSurface : public ImplicitSurface3
@@ -55,7 +61,7 @@ protected:
 	auto _intersects_local(const mRay3 &ray) const -> bool final;
 	auto _bounding_box_local() const -> mBBox3 final;
 
-private:
+public:
 	std::array<mVector3, 3> _points;
 	std::array<mVector3, 3> _normals;
 	std::array<mVector2, 3> _uvs;

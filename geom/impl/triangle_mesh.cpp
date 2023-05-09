@@ -31,7 +31,7 @@ inline auto closest_normal_on_line(const mVector3 &v0, const mVector3 &v1, const
 		return (n0 + t * (n1 - n0)).normalized();
 }
 
-HinaPE::Geom::TriangleMeshSurface::TriangleMeshSurface(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices) : Surface3(), vertices(vertices), indices(indices)
+HinaPE::Geom::TriangleMeshSurface::TriangleMeshSurface(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices) : Surface3(), _vertices(vertices), _indices(indices)
 {
 	// generate normals
 	Eigen::Matrix<real, Eigen::Dynamic, 3> V;
@@ -52,12 +52,22 @@ HinaPE::Geom::TriangleMeshSurface::TriangleMeshSurface(const std::vector<mVector
 	}
 	Eigen::Matrix<real, Eigen::Dynamic, 3> N;
 	igl::per_face_normals(V, F, N);
-	normals.resize(N.rows());
+	_normals.resize(N.rows());
 	for (int i = 0; i < N.rows(); i++)
-		normals[i] = mVector3(N(i, 0), N(i, 1), N(i, 2));
+		_normals[i] = mVector3(N(i, 0), N(i, 1), N(i, 2));
 }
 auto HinaPE::Geom::TriangleMeshSurface::_closest_point_local(const mVector3 &other_point) const -> mVector3
 {
+	buildBVH();
+
+	const auto distance_func = [this](const size_t &triIdx, const mVector3 &pt)
+	{
+		Triangle tri = triangle(triIdx);
+		return tri.closest_distance(pt);
+	};
+
+//	const auto query_res = _bvh.
+
 	return mVector3();
 }
 auto HinaPE::Geom::TriangleMeshSurface::_closest_intersection_local(const mRay3 &ray) const -> HinaPE::Geom::SurfaceRayIntersection3
@@ -79,10 +89,36 @@ auto HinaPE::Geom::TriangleMeshSurface::_bounding_box_local() const -> mBBox3
 
 void HinaPE::Geom::TriangleMeshSurface::buildBVH() const
 {
-	size_t n_tris = indices.size() / 3;
-	std::vector<size_t> ids(n_tris);
-	std::vector<mBBox3> bounds(n_tris);
+	if (_bvh_dirty)
+	{
+		size_t n_tris = _indices.size() / 3;
+		std::vector<size_t> ids(n_tris);
+		std::vector<mBBox3> bounds(n_tris);
+		for (int i = 0; i < n_tris; ++i)
+		{
+			ids[i] = i;
+			bounds[i] = triangle(i).bounding_box();
+		}
+		_bvh.build(ids, bounds);
+		_bvh_dirty = false;
+	}
 }
+
+auto HinaPE::Geom::TriangleMeshSurface::triangle(size_t i) const -> HinaPE::Geom::Triangle
+{
+	Triangle triangle;
+
+	// TODO: not completed
+	for (int j = 0; j < 3; ++j)
+	{
+		triangle._points[i] = _vertices[_indices[i * 3 + j]];
+		triangle._normals[i] = _normals[_indices[i * 3 + j]];
+		triangle._uvs[i] = _uvs[_indices[i * 3 + j]];
+	}
+
+	return triangle;
+}
+
 auto HinaPE::Geom::Triangle::_closest_point_local(const mVector3 &other_point) const -> mVector3
 {
 	auto n = face_normal();
