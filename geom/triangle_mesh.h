@@ -11,7 +11,9 @@ class Triangle;
 class TriangleMeshSurface : public Surface3
 {
 public:
+	TriangleMeshSurface() = default;
 	TriangleMeshSurface(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices);
+	void reload(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices);
 	auto triangle(size_t i) const -> Triangle;
 	inline auto number_of_triangles() -> size_t{return _indices.size() / 3;}
 
@@ -39,8 +41,13 @@ private:
 
 class ImplicitTriangleMeshSurface : public ImplicitSurface3
 {
-public:
-
+protected:
+	auto _closest_point_local(const mVector3 &other_point) const -> mVector3 override;
+	auto _closest_intersection_local(const mRay3 &ray) const -> SurfaceRayIntersection3 override;
+	auto _closest_normal_local(const mVector3 &other_point) const -> mVector3 override;
+	auto _intersects_local(const mRay3 &ray) const -> bool override;
+	auto _bounding_box_local() const -> mBBox3 override;
+	auto _signed_distance_local(const mVector3 &other_point) const -> real override;
 
 private:
 	std::shared_ptr<TriangleMeshSurface> _mesh;

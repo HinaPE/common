@@ -33,6 +33,11 @@ inline auto closest_normal_on_line(const mVector3 &v0, const mVector3 &v1, const
 
 HinaPE::Geom::TriangleMeshSurface::TriangleMeshSurface(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices) : Surface3(), _vertices(vertices), _indices(indices)
 {
+	reload(vertices, indices);
+}
+
+void HinaPE::Geom::TriangleMeshSurface::reload(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices)
+{
 	// generate normals
 	Eigen::Matrix<real, Eigen::Dynamic, 3> V;
 	Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> F;
@@ -159,6 +164,36 @@ auto HinaPE::Geom::TriangleMeshSurface::triangle(size_t i) const -> HinaPE::Geom
 	}
 
 	return triangle;
+}
+
+auto HinaPE::Geom::ImplicitTriangleMeshSurface::_closest_point_local(const mVector3 &other_point) const -> mVector3
+{
+	return mVector3();
+}
+
+auto HinaPE::Geom::ImplicitTriangleMeshSurface::_closest_intersection_local(const mRay3 &ray) const -> HinaPE::Geom::SurfaceRayIntersection3
+{
+	return SurfaceRayIntersection3();
+}
+
+auto HinaPE::Geom::ImplicitTriangleMeshSurface::_closest_normal_local(const mVector3 &other_point) const -> mVector3
+{
+	return mVector3();
+}
+
+auto HinaPE::Geom::ImplicitTriangleMeshSurface::_intersects_local(const mRay3 &ray) const -> bool
+{
+	return false;
+}
+
+auto HinaPE::Geom::ImplicitTriangleMeshSurface::_bounding_box_local() const -> mBBox3
+{
+	return mBBox3();
+}
+
+auto HinaPE::Geom::ImplicitTriangleMeshSurface::_signed_distance_local(const mVector3 &other_point) const -> real
+{
+	return 0;
 }
 
 auto HinaPE::Geom::Triangle::_closest_point_local(const mVector3 &other_point) const -> mVector3
