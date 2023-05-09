@@ -12,6 +12,7 @@ class BVH final : public Util::IntersectionQueryEngine3<T>, public Util::Nearest
 {
 public:
 	void build(const std::vector<T> &items, const std::vector<mBBox3> &items_bounds);
+	inline auto bbox() const -> mBBox3 { return _bound; }
 
 public:
 	auto intersects(const mBBox3 &box, const Util::BoxIntersectionTestFunc3<T> &testFunc) const -> bool final;
@@ -320,7 +321,8 @@ auto BVH<T>::closestIntersection(const mRay3 &ray, const Util::GetRayIntersectio
 				node = todo[--todo_pos];
 			} else
 				break;
-		} else {
+		} else
+		{
 			// get node children pointers for ray
 			const Node *left;
 			const Node *right;

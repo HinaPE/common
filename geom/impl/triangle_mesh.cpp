@@ -56,6 +56,7 @@ HinaPE::Geom::TriangleMeshSurface::TriangleMeshSurface(const std::vector<mVector
 	for (int i = 0; i < N.rows(); i++)
 		_normals[i] = mVector3(N(i, 0), N(i, 1), N(i, 2));
 }
+
 auto HinaPE::Geom::TriangleMeshSurface::_closest_point_local(const mVector3 &other_point) const -> mVector3
 {
 	buildBVH();
@@ -66,25 +67,66 @@ auto HinaPE::Geom::TriangleMeshSurface::_closest_point_local(const mVector3 &oth
 		return tri.closest_distance(pt);
 	};
 
-//	const auto query_res = _bvh.
+	const auto query_res = _bvh.nearest(other_point, distance_func);
 
-	return mVector3();
+	return triangle(*query_res.item).closest_point(other_point);
 }
+
 auto HinaPE::Geom::TriangleMeshSurface::_closest_intersection_local(const mRay3 &ray) const -> HinaPE::Geom::SurfaceRayIntersection3
 {
-	return SurfaceRayIntersection3();
+	buildBVH();
+
+	const auto test_func = [this](const size_t &triIdx, const mRay3 &ray)
+	{
+		Triangle tri = triangle(triIdx);
+		return tri.closest_intersection(ray).distance;
+	};
+
+	const auto query_res = _bvh.closestIntersection(ray, test_func);
+	SurfaceRayIntersection3 res;
+	res.distance = query_res.distance;
+	res.is_intersecting = query_res.item != nullptr;
+	if (res.is_intersecting)
+	{
+		res.point = ray.point_at(query_res.distance);
+		res.normal = triangle(*query_res.item).closest_normal(res.point);
+	}
+	return res;
 }
+
 auto HinaPE::Geom::TriangleMeshSurface::_closest_normal_local(const mVector3 &other_point) const -> mVector3
 {
-	return mVector3();
+	buildBVH();
+
+	const auto distance_func = [this](const size_t &triIdx, const mVector3 &pt)
+	{
+		Triangle tri = triangle(triIdx);
+		return tri.closest_distance(pt);
+	};
+
+	const auto query_res = _bvh.nearest(other_point, distance_func);
+
+	return triangle(*query_res.item).closest_normal(other_point);
 }
+
 auto HinaPE::Geom::TriangleMeshSurface::_intersects_local(const mRay3 &ray) const -> bool
 {
-	return false;
+	buildBVH();
+
+	const auto test_func = [this](const size_t &triIdx, const mRay3 &ray)
+	{
+		Triangle tri = triangle(triIdx);
+		return tri.intersects(ray);
+	};
+
+	return _bvh.intersects(ray, test_func);
 }
+
 auto HinaPE::Geom::TriangleMeshSurface::_bounding_box_local() const -> mBBox3
 {
-	return mBBox3();
+	buildBVH();
+
+	return _bvh.bbox();
 }
 
 void HinaPE::Geom::TriangleMeshSurface::buildBVH() const
