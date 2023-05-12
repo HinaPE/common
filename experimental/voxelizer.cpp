@@ -1,25 +1,25 @@
 #include "voxelizer.h"
 
-void HinaPE::Experimental::Voxelizer::voxelize(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices, mVector3 spacing, HinaPE::Experimental::Voxelizer::Result &result)
+auto HinaPE::Experimental::Voxelizer::voxelize(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices, mVector3 spacing) -> Geom::DataGrid3<int>
 {
-	result.spacing = spacing;
-	result.bounds = mBBox3(vertices);
+	mBBox3 bounds(vertices);
 
 	Math::Size3 resolution;
-	resolution.x = static_cast<size_t>(std::ceil(result.bounds.width() / spacing.x()));
-	resolution.y = static_cast<size_t>(std::ceil(result.bounds.height() / spacing.y()));
-	resolution.z = static_cast<size_t>(std::ceil(result.bounds.depth() / spacing.z()));
+	resolution.x = static_cast<size_t>(std::ceil(bounds.width() / spacing.x()));
+	resolution.y = static_cast<size_t>(std::ceil(bounds.height() / spacing.y()));
+	resolution.z = static_cast<size_t>(std::ceil(bounds.depth() / spacing.z()));
 
-	result.grid.resize(resolution, spacing, result.bounds.center());
-	result.grid.clear(false);
+	Geom::DataGrid3<int> grid;
+	grid.resize(resolution, spacing, bounds.center());
+	grid.clear(false);
 
 	// 3d index of the voxel containing the point
 	auto index = [&](const mVector3 &p) -> mVector3i
 	{
 		return {
-				static_cast<int>(std::floor((p.x() - result.bounds._lower_corner.x()) / result.spacing.x())),
-				static_cast<int>(std::floor((p.y() - result.bounds._lower_corner.y()) / result.spacing.y())),
-				static_cast<int>(std::floor((p.z() - result.bounds._lower_corner.z()) / result.spacing.z()))
+				static_cast<int>(std::floor((p.x() - bounds._lower_corner.x()) / spacing.x())),
+				static_cast<int>(std::floor((p.y() - bounds._lower_corner.y()) / spacing.y())),
+				static_cast<int>(std::floor((p.z() - bounds._lower_corner.z()) / spacing.z()))
 		};
 	};
 
@@ -39,7 +39,7 @@ void HinaPE::Experimental::Voxelizer::voxelize(const std::vector<mVector3> &vert
 			{
 				for (int x = iBounds._lower_corner.x(); x <= iBounds._upper_corner.x(); ++x)
 				{
-					mVector3 center = result.bounds.center();
+					mVector3 center = bounds.center();
 					real d = (center - p0).dot(normal);
 
 					// check if voxel intersects triangle plane
@@ -59,31 +59,33 @@ void HinaPE::Experimental::Voxelizer::voxelize(const std::vector<mVector3> &vert
 						}
 
 						if (s >= 0.f && t >= 0.f && (1.f - s - t) >= 0.f)
-							result.grid(x, y, z) = true;
+							grid(x, y, z) = true;
 					}
 				}
 			}
 		}
 	};
 
-	for (int t = 0; t < indices.size(); ++t)
+	for (int t = 0; t < indices.size(); t+=3)
 	{
-		const mVector3 &p0 = vertices[indices[t + 1]];
-		const mVector3 &p1 = vertices[indices[t + 2]];
-		const mVector3 &p2 = vertices[indices[t + 3]];
+		const mVector3 &p0 = vertices[indices[t + 0]];
+		const mVector3 &p1 = vertices[indices[t + 1]];
+		const mVector3 &p2 = vertices[indices[t + 2]];
 		rasterize_triangle(p0, p1, p2);
 	}
+
+	return grid;
 }
 
 void HinaPE::Experimental::Voxelizer::voxelize(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices, mVector3 spacing, std::vector<mVector3> &voxels)
 {
-	Result result;
-	voxelize(vertices, indices, spacing, result);
-	auto resolution = result.grid.resolution;
+	auto grid = voxelize(vertices, indices, spacing);
+	auto resolution = grid.resolution;
+	auto bounds = grid.bbox();
 
 	for (int z = 0; z < resolution.z; ++z)
 		for (int y = 0; y < resolution.y; ++y)
 			for (int x = 0; x < resolution.x; ++x)
-				if (result.grid(x, y, z)) // 1 for true, 0 for false
-					voxels.emplace_back(result.bounds._lower_corner + mVector3(x + Constant::Half, y + Constant::Half, z + Constant::Half) * spacing);
+				if (grid(x, y, z)) // 1 for true, 0 for false
+					voxels.emplace_back(bounds._lower_corner + mVector3(x + Constant::Half, y + Constant::Half, z + Constant::Half) * spacing);
 }

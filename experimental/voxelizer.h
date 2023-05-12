@@ -11,14 +11,7 @@ namespace HinaPE::Experimental
 class Voxelizer final
 {
 public:
-	struct Result
-	{
-		mVector3 spacing;
-		mBBox3 bounds;
-		Geom::DataGrid3<int> grid; //  1 for true, 0 for false
-	};
-
-	static void voxelize(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices, mVector3 spacing, Result &result);
+	static auto voxelize(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices, mVector3 spacing) -> Geom::DataGrid3<int>; //  1 for true, 0 for false
 	static void voxelize(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices, mVector3 spacing, std::vector<mVector3> &voxels);
 };
 } // namespace HinaPE::Experimental

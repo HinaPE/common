@@ -109,11 +109,11 @@ void DataGrid3<T>::resize(const mSize3 &r, const mVector3 &s, const mVector3 &c)
 template<typename T>
 void DataGrid3<T>::clear(T value)
 {
-	data_center.resize(mSize3::Zero(), value);
-	data_vertex.resize(mSize3::Zero(), value);
-	data_face_u.resize(mSize3::Zero(), value);
-	data_face_v.resize(mSize3::Zero(), value);
-	data_face_w.resize(mSize3::Zero(), value);
+	data_center.fill(value);
+	data_vertex.fill(value);
+	data_face_u.fill(value);
+	data_face_v.fill(value);
+	data_face_w.fill(value);
 }
 
 template<typename T>

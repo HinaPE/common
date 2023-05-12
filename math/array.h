@@ -20,6 +20,7 @@ class Array3
 {
 public:
 	void resize(const Size3 &size, const T &initial_value = T());
+	void fill(const T &value);
 	auto swap(Array3<T> &other) -> void;
 
 public:
@@ -61,6 +62,9 @@ void Array3<T>::resize(const Size3 &size, const T &initial_value)
 				grid(i, j, k) = at(i, j, k);
 	swap(grid);
 }
+
+template<typename T>
+void Array3<T>::fill(const T &value) { std::fill(_data.begin(), _data.end(), value); }
 
 template<typename T>
 auto Array3<T>::swap(Array3<T> &other) -> void
