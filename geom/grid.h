@@ -27,7 +27,7 @@ struct DataGrid3
 	struct Cell
 	{
 		// center data
-		T center;
+		T center; // default
 
 		// face data
 		T top;
@@ -58,10 +58,14 @@ struct DataGrid3
 	};
 
 	DataGrid3();
+	auto operator()(size_t x, size_t y, size_t z) -> T&;
+	auto operator()(size_t x, size_t y, size_t z) const -> const T&;
+
 	void resize(const mSize3 &resolution, const mVector3 &spacing, const mVector3 &center = mVector3::Zero());
 	void clear(T value = T());
 	auto bbox() const -> mBBox3;
 
+	auto sample(real x, real y, real z, Data data = Data::Center) const -> T;
 	auto sample(const mVector3 &x, Data data = Data::Center) const -> T;
 	auto sample_uvw(const mVector3 &x) const -> mVector3;
 	auto cell(size_t x, size_t y, size_t z) const -> Cell;
@@ -77,6 +81,12 @@ DataGrid3<T>::DataGrid3()
 {
 	resize(mSize3::Ones(), mVector3::One());
 }
+
+template<typename T>
+auto DataGrid3<T>::operator()(size_t x, size_t y, size_t z) -> T & { return data_center(x, y, z); }
+
+template<typename T>
+auto DataGrid3<T>::operator()(size_t x, size_t y, size_t z) const -> const T & { return data_center(x, y, z); }
 
 template<typename T>
 void DataGrid3<T>::resize(const mSize3 &r, const mVector3 &s, const mVector3 &c)
@@ -119,6 +129,12 @@ auto DataGrid3<T>::bbox() const -> mBBox3
 	);
 
 	return bbox;
+}
+
+template<typename T>
+auto DataGrid3<T>::sample(real x, real y, real z, DataGrid3::Data data) const -> T
+{
+	return sample(mVector3(x, y, z, data));
 }
 
 template<typename T>
