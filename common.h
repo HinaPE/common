@@ -16,6 +16,8 @@
 #include "geom/grid.h"
 #include "geom/triangle_mesh.h"
 #include "util/parallel.h"
+#include "experimental/voxelizer.h"
+#include "experimental/sdf.h"
 
 namespace HinaPE
 {
