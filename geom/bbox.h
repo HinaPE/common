@@ -37,10 +37,11 @@ public:
 	auto intersects(const Math::Ray3<T> &ray) const -> bool;
 
 public:
-	constexpr BoundingBox3();
-	constexpr BoundingBox3(const Math::Vector3<T> &point1, const Math::Vector3<T> &point2);
-	constexpr BoundingBox3(const BoundingBox3 &bbox) = default;
-	constexpr BoundingBox3(BoundingBox3 &&bbox) noexcept = default;
+	BoundingBox3();
+	explicit BoundingBox3(const std::vector<mVector3> &points);
+	BoundingBox3(const Math::Vector3<T> &point1, const Math::Vector3<T> &point2);
+	BoundingBox3(const BoundingBox3 &bbox) = default;
+	BoundingBox3(BoundingBox3 &&bbox) noexcept = default;
 	auto operator=(const BoundingBox3 &bbox) -> BoundingBox3 & = default;
 	auto operator=(BoundingBox3 &&bbox) noexcept -> BoundingBox3 & = default;
 
@@ -49,9 +50,11 @@ public:
 };
 
 template<typename T>
-constexpr BoundingBox3<T>::BoundingBox3() : _lower_corner(0), _upper_corner(0) {}
+BoundingBox3<T>::BoundingBox3() : _lower_corner(std::numeric_limits<T>::max()), _upper_corner(-std::numeric_limits<T>::max()) {}
 template<typename T>
-constexpr BoundingBox3<T>::BoundingBox3(const Math::Vector3<T> &point1, const Math::Vector3<T> &point2)
+BoundingBox3<T>::BoundingBox3(const std::vector<mVector3> &points) : BoundingBox3() { for (const auto &point: points) merge(point); }
+template<typename T>
+BoundingBox3<T>::BoundingBox3(const Math::Vector3<T> &point1, const Math::Vector3<T> &point2)
 {
 	_lower_corner.x() = std::min(point1.x(), point2.x());
 	_lower_corner.y() = std::min(point1.y(), point2.y());
@@ -161,7 +164,7 @@ template<typename T>
 auto BoundingBox3<T>::intersects(const Math::Ray3<T> &ray) const -> bool
 {
 	T min = 0, max = std::numeric_limits<T>::max();
-	const Math::Vector3<T>& ray_inv_dir = ray._direction.reciprocal();
+	const Math::Vector3<T> &ray_inv_dir = ray._direction.reciprocal();
 
 	for (size_t i = 0; i < 3; ++i)
 	{
@@ -184,4 +187,5 @@ using mBBox3 = HinaPE::Geom::BoundingBox3<double>;
 #else
 using mBBox3 = HinaPE::Geom::BoundingBox3<float>;
 #endif
+using mBBox3i = HinaPE::Geom::BoundingBox3<int>;
 #endif //HINAPE_BBOX_H
