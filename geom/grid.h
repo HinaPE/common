@@ -59,7 +59,7 @@ struct DataGrid3
 
 	DataGrid3();
 	void resize(const mSize3 &resolution, const mVector3 &spacing, const mVector3 &center = mVector3::Zero());
-	void clear();
+	void clear(T value = T());
 	auto bbox() const -> mBBox3;
 
 	auto sample(const mVector3 &x, Data data = Data::Center) const -> T;
@@ -97,13 +97,13 @@ void DataGrid3<T>::resize(const mSize3 &r, const mVector3 &s, const mVector3 &c)
 }
 
 template<typename T>
-void DataGrid3<T>::clear()
+void DataGrid3<T>::clear(T value)
 {
-	data_center.resize(mSize3::Zero());
-	data_vertex.resize(mSize3::Zero());
-	data_face_u.resize(mSize3::Zero());
-	data_face_v.resize(mSize3::Zero());
-	data_face_w.resize(mSize3::Zero());
+	data_center.resize(mSize3::Zero(), value);
+	data_vertex.resize(mSize3::Zero(), value);
+	data_face_u.resize(mSize3::Zero(), value);
+	data_face_v.resize(mSize3::Zero(), value);
+	data_face_w.resize(mSize3::Zero(), value);
 }
 
 template<typename T>
