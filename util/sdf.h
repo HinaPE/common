@@ -6,7 +6,7 @@
 
 #include "geom/grid.h"
 
-namespace HinaPE::Experimental
+namespace HinaPE::Util
 {
 class SDF final
 {

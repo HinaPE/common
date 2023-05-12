@@ -1,6 +1,6 @@
 #include "voxelizer.h"
 
-auto HinaPE::Experimental::Voxelizer::voxelize(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices, mVector3 spacing) -> Geom::DataGrid3<int>
+auto HinaPE::Util::Voxelizer::voxelize(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices, mVector3 spacing) -> Geom::DataGrid3<int>
 {
 	mBBox3 bounds(vertices);
 
@@ -77,7 +77,7 @@ auto HinaPE::Experimental::Voxelizer::voxelize(const std::vector<mVector3> &vert
 	return grid;
 }
 
-void HinaPE::Experimental::Voxelizer::voxelize(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices, mVector3 spacing, std::vector<mVector3> &voxels)
+void HinaPE::Util::Voxelizer::voxelize(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices, mVector3 spacing, std::vector<mVector3> &voxels)
 {
 	auto grid = voxelize(vertices, indices, spacing);
 	auto resolution = grid.resolution;

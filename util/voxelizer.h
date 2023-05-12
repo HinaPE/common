@@ -6,7 +6,7 @@
 
 #include "common.h"
 
-namespace HinaPE::Experimental
+namespace HinaPE::Util
 {
 class Voxelizer final
 {
