@@ -3,16 +3,17 @@
 #include "experimental/Mesh.h"
 #include "experimental/Voxelizer.h"
 
-auto HinaPE::Util::Voxelizer::voxelize(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices, mVector3 spacing) -> Geom::DataGrid3<int>
+auto
+HinaPE::Util::Voxelizer::voxelize(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices, mVector3 spacing) -> Geom::DataGrid3<int>
 {
 	Geom::DataGrid3<int> data;
 
 	cs224::Mesh mesh;
-	for (auto &v : vertices)
+	for (auto &v: vertices)
 		mesh.addVertex(cs224::Vector3f(v.x(), v.y(), v.z()), cs224::Vector3f(), cs224::Vector2f());
 
-	for (int i = 0; i < indices.size(); i+=3)
-		mesh.addTriangle(indices[i], indices[i+1], indices[i+2]);
+	for (int i = 0; i < indices.size(); i += 3)
+		mesh.addTriangle(indices[i], indices[i + 1], indices[i + 2]);
 
 	cs224::Voxelizer::Result result;
 	cs224::Voxelizer::voxelize(mesh, spacing.x(), result);
@@ -32,7 +33,20 @@ auto HinaPE::Util::Voxelizer::voxelize(const std::vector<mVector3> &vertices, co
 	return data;
 }
 
-void HinaPE::Util::Voxelizer::voxelize(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices, mVector3 spacing, std::vector<mVector3> &voxels)
+void
+HinaPE::Util::Voxelizer::voxelize(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices, mVector3 spacing, std::vector<mVector3> &voxels)
 {
+	auto grid = voxelize(vertices, indices, spacing);
 
+	auto resolution = grid.resolution;
+	auto origin = grid.origin;
+
+	for (int z = 0; z < resolution.z; ++z)
+		for (int y = 0; y < resolution.y; ++y)
+			for (int x = 0; x < resolution.x; ++x)
+				if (grid(x, y, z))
+					voxels.emplace_back(
+							origin.x() + (x + Constant::Half) * spacing.x(),
+							origin.y() + (y + Constant::Half) * spacing.y(),
+							origin.z() + (z + Constant::Half) * spacing.z());
 }

@@ -15,6 +15,7 @@ public:
 	TriangleMeshSurface(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices);
 	void reload(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices);
 	auto triangle(size_t i) const -> Triangle;
+	auto normals() const -> const std::vector<mVector3> &{return _normals;}
 	inline auto number_of_triangles() -> size_t{return _indices.size() / 3;}
 
 protected:

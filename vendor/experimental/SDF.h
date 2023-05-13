@@ -2,6 +2,7 @@
 
 #include "Mesh.h"
 #include "VoxelGrid.h"
+#include "Grid.h"
 
 #include "Math.h"
 
