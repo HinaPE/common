@@ -5,7 +5,7 @@ namespace cs224 {
 Mesh::Mesh() {
 	m_vertices.resize(3, 0);
 	m_normals.resize(3, 0);
-	m_uvs.resize(3, 0);
+	m_uvs.resize(2, 0);
 	m_triangles.resize(3, 0);
 }
 

@@ -1,6 +1,6 @@
 #include "Voxelizer.h"
 #include "Mesh.h"
-#include <Eigen/Geometry>
+#include "common/vendor/eigen3/Eigen/Geometry"
 
 namespace cs224 {
 

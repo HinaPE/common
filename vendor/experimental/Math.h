@@ -1,7 +1,7 @@
 #pragma once 
 
 #include <cmath>
-#include <Eigen/Core>
+#include "common/vendor/eigen3/Eigen/Core"
 
 namespace cs224 {
 

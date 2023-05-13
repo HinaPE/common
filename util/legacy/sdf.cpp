@@ -148,7 +148,7 @@ static auto point_in_triangle_2d(real x0, real y0, real x1, real y1, real x2, re
 	return true;
 }
 
-auto HinaPE::Util::SDF::build(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices, const Math::Size3 &resolution, real spacing, const int exact_band) -> Geom::DataGrid3 <real>
+auto HinaPE::Util::Legacy::SDF::build(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices, const Math::Size3 &resolution, real spacing, const int exact_band) -> Geom::DataGrid3 <real>
 {
 	// init sdf
 	Geom::DataGrid3<real> sdf;

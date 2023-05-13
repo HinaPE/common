@@ -9,8 +9,8 @@
     #define GL_GLEXT_PROTOTYPES
 #endif
 
-#include <Eigen/Core>
-#include <GLFW/glfw3.h>
+#include "common/vendor/eigen3/Eigen/Core"
+#include "backends/deps/glfw3/include/GLFW/glfw3.h"
 #include <iostream>
 #include <vector>
 #include <string>
