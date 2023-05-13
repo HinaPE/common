@@ -15,7 +15,8 @@ public:
 	TriangleMeshSurface(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices);
 	void reload(const std::vector<mVector3> &vertices, const std::vector<unsigned int> &indices);
 	auto triangle(size_t i) const -> Triangle;
-	auto normals() const -> const std::vector<mVector3> &{return _normals;}
+	auto normals_per_face() const -> const std::vector<mVector3> &{ return _normals; }
+	auto normals_per_vertex() const -> const std::vector<mVector3> &{ return _normals_per_vertex; }
 	inline auto number_of_triangles() -> size_t{return _indices.size() / 3;}
 
 protected:
@@ -31,6 +32,7 @@ private:
 private:
 	std::vector<mVector3> _vertices;
 	std::vector<mVector3> _normals;
+	std::vector<mVector3> _normals_per_vertex;
 	std::vector<mVector2> _uvs;
 	std::vector<unsigned int> _indices;
 	std::vector<unsigned int> _normal_indices;

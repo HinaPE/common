@@ -1,5 +1,6 @@
 #include "geom/triangle_mesh.h"
 #include "igl/per_face_normals.h"
+#include "igl/per_vertex_normals.h"
 
 inline auto closest_point_on_line(const mVector3 &v0, const mVector3 &v1, const mVector3 &pt) -> mVector3
 {
@@ -55,11 +56,20 @@ void HinaPE::Geom::TriangleMeshSurface::reload(const std::vector<mVector3> &vert
 		F(i, 1) = indices[i * 3 + 1];
 		F(i, 2) = indices[i * 3 + 2];
 	}
-	Eigen::Matrix<real, Eigen::Dynamic, 3> N;
-	igl::per_face_normals(V, F, N);
-	_normals.resize(N.rows());
-	for (int i = 0; i < N.rows(); i++)
-		_normals[i] = mVector3(N(i, 0), N(i, 1), N(i, 2));
+	{ // per face normals
+		Eigen::Matrix<real, Eigen::Dynamic, 3> N;
+		igl::per_face_normals(V, F, N);
+		_normals.resize(N.rows());
+		for (int i = 0; i < N.rows(); i++)
+			_normals[i] = mVector3(N(i, 0), N(i, 1), N(i, 2));
+	}
+	{ // per vertex normals
+		Eigen::Matrix<real, Eigen::Dynamic, 3> N;
+		igl::per_vertex_normals(V, F, N);
+		_normals_per_vertex.resize(N.rows());
+		for (int i = 0; i < N.rows(); i++)
+			_normals_per_vertex[i] = mVector3(N(i, 0), N(i, 1), N(i, 2));
+	}
 }
 
 auto HinaPE::Geom::TriangleMeshSurface::_closest_point_local(const mVector3 &other_point) const -> mVector3
