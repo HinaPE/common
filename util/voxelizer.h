@@ -4,7 +4,8 @@
 // Copyright (c) 2023 Xayah Hina
 // MPL-2.0 license
 
-#include "common.h"
+#include "math/vector.h"
+#include "geom/grid.h"
 
 namespace HinaPE::Util
 {

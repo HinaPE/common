@@ -29,9 +29,10 @@ public:
     static Mesh createBox(const Box3f &box);
     static Mesh createSphere(const Vector3f &position, float radius, int segments = 32);
 
-private:
     void addVertex(const Vector3f &p, const Vector3f &n, const Vector2f &uv);
     void addTriangle(int a, int b, int c);
+
+private:
 
     MatrixXf m_vertices;
     MatrixXf m_normals;
