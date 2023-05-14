@@ -63,7 +63,7 @@ if (OpenVDB_FOUND)
 endif ()
 
 set(CGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE TRUE CACHE BOOL "Disable CGAL build type warning")
-find_package(CGAL REQUIRED)
+find_package(CGAL)
 if (CGAL_FOUND)
     message(STATUS ">> CGAL found")
     target_compile_definitions(HinaPE_Common PUBLIC HINAPE_CGAL)
