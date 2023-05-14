@@ -4,7 +4,7 @@
 #if defined(__APPLE__)
     #define GLFW_INCLUDE_GLCOREARB
 #elif defined(_WIN32)
-    #include <glad/glad.h>
+    #include "backends/deps/glad/glad.h"
 #else
     #define GL_GLEXT_PROTOTYPES
 #endif
