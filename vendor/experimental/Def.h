@@ -4,7 +4,7 @@
 #if defined(__APPLE__)
     #define GLFW_INCLUDE_GLCOREARB
 #elif defined(_WIN32)
-    #include "backends/deps/glad/glad.h"
+//    #include "glad/glad.h"
 #else
     #define GL_GLEXT_PROTOTYPES
 #endif
@@ -26,15 +26,15 @@ const std::string base_directory = "/home/sj4/course/pcisph/";
 
 #define PI 3.1415926536
 
-template <typename T> struct CPP2GL_types;
-template <> struct CPP2GL_types <uint32_t> { enum { type = GL_UNSIGNED_INT, integral = 1 }; };
-template <> struct CPP2GL_types <int32_t> { enum { type = GL_INT, integral = 1 }; };
-template <> struct CPP2GL_types <uint16_t> { enum { type = GL_UNSIGNED_SHORT, integral = 1 }; };
-template <> struct CPP2GL_types <int16_t> { enum { type = GL_SHORT, integral = 1 }; };
-template <> struct CPP2GL_types <uint8_t> { enum { type = GL_UNSIGNED_BYTE, integral = 1 }; };
-template <> struct CPP2GL_types <int8_t> { enum { type = GL_BYTE, integral = 1 }; };
-template <> struct CPP2GL_types <double> { enum { type = GL_DOUBLE, integral = 0 }; };
-template <> struct CPP2GL_types <float> { enum { type = GL_FLOAT, integral = 0 }; };
+//template <typename T> struct CPP2GL_types;
+//template <> struct CPP2GL_types <uint32_t> { enum { type = GL_UNSIGNED_INT, integral = 1 }; };
+//template <> struct CPP2GL_types <int32_t> { enum { type = GL_INT, integral = 1 }; };
+//template <> struct CPP2GL_types <uint16_t> { enum { type = GL_UNSIGNED_SHORT, integral = 1 }; };
+//template <> struct CPP2GL_types <int16_t> { enum { type = GL_SHORT, integral = 1 }; };
+//template <> struct CPP2GL_types <uint8_t> { enum { type = GL_UNSIGNED_BYTE, integral = 1 }; };
+//template <> struct CPP2GL_types <int8_t> { enum { type = GL_BYTE, integral = 1 }; };
+//template <> struct CPP2GL_types <double> { enum { type = GL_DOUBLE, integral = 0 }; };
+//template <> struct CPP2GL_types <float> { enum { type = GL_FLOAT, integral = 0 }; };
 
 typedef Vector<float, 2>       Vector2f;
 typedef Vector<float, 3>       Vector3f;
