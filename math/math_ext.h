@@ -391,7 +391,8 @@ auto distanceToZeroLevelSet(T phi0, T phi1) -> T
 		return static_cast<T>(0.5);
 }
 
-auto random_real(auto l = 0, auto u = 1) -> auto
+template <typename T>
+auto random_real(T l = 0, T u = 1) -> T
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
@@ -399,7 +400,8 @@ auto random_real(auto l = 0, auto u = 1) -> auto
 	return dis(gen);
 }
 
-auto to_string(auto info) -> std::string
+template <typename T>
+auto to_string(T info) -> std::string
 {
 	return std::to_string(info);
 }
